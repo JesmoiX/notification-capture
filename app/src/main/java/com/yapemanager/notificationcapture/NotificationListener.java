@@ -91,10 +91,14 @@ public class NotificationListener extends NotificationListenerService {
         String packageName = sbn.getPackageName();
         Log.d(TAG, "Notification from: " + packageName);
 
-        // Solo capturar notificaciones de Gmail
-        if (!packageName.equals("com.google.android.gm")) {
+        // Solo capturar notificaciones de YAPE
+        // Posibles package names: com.yape.app, com.yape, pe.com.yape
+        if (!packageName.contains("yape")) {
+            Log.d(TAG, "No es Yape, ignorando: " + packageName);
             return;
         }
+        
+        Log.d(TAG, "✅ Notificación de YAPE detectada: " + packageName);
 
         // ═══════════════════════════════════════════════════════════
         // DETECCIÓN DE DUPLICADOS - MECANISMO 1: ID único
@@ -156,7 +160,7 @@ public class NotificationListener extends NotificationListenerService {
             Log.d(TAG, "Cache de IDs limpiado (límite alcanzado)");
         }
 
-        Log.d(TAG, "✅ Gmail Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
+        Log.d(TAG, "✅ YAPE Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
 
         // Enviar a Google Sheets (optimizado con thread pool)
         capturedCount++;
@@ -164,7 +168,7 @@ public class NotificationListener extends NotificationListenerService {
         sendToGoogleSheets(title, text, packageName);
         
         // ═══════════════════════════════════════════════════════════
-        // ANUNCIO EN GOOGLE HOME (si está activado y contiene "YAPE")
+        // ANUNCIO DE VOZ (si está activado)
         // ═══════════════════════════════════════════════════════════
         announceToGoogleHomeIfEnabled(title, text);
     }
@@ -175,16 +179,7 @@ public class NotificationListener extends NotificationListenerService {
             boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
             
             if (!googleHomeEnabled) {
-                Log.d(TAG, "Google Home anuncios desactivados");
-                return;
-            }
-            
-            // Verificar si contiene "YAPE" (case insensitive)
-            String titleLower = title.toLowerCase();
-            String contentLower = content.toLowerCase();
-            
-            if (!titleLower.contains("yape") && !contentLower.contains("yape")) {
-                Log.d(TAG, "No contiene YAPE, no se anuncia");
+                Log.d(TAG, "Anuncios de voz desactivados");
                 return;
             }
             
@@ -201,14 +196,14 @@ public class NotificationListener extends NotificationListenerService {
             
             // TODO: Reproducir sonido antes del anuncio (si está configurado)
             
-            // Anunciar en Google Home
+            // Anunciar con TTS local
             GoogleHomeAnnouncer announcer = new GoogleHomeAnnouncer(this);
             announcer.announceYapePayment(title, content);
             
-            Log.d(TAG, "🔊 Anuncio enviado a Google Home");
+            Log.d(TAG, "🔊 Anuncio de voz enviado");
             
         } catch (Exception e) {
-            Log.e(TAG, "Error al anunciar en Google Home: " + e.getMessage());
+            Log.e(TAG, "Error al anunciar: " + e.getMessage());
             e.printStackTrace();
         }
     }

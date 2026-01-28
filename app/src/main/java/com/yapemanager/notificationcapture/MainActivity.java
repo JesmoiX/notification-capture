@@ -199,10 +199,10 @@ public class MainActivity extends AppCompatActivity {
         
         if (hasPermission && !url.isEmpty()) {
             status.append("✅ Estado: ACTIVO\n\n");
-            status.append("La app está capturando notificaciones de Gmail y enviándolas a Google Sheets.");
+            status.append("La app está capturando notificaciones de YAPE y enviándolas a Google Sheets.");
             
             if (googleHomeEnabled) {
-                status.append("\n\n🔊 Anuncios de Google Home: ACTIVADOS");
+                status.append("\n\n🔊 Anuncios de voz: ACTIVADOS");
                 status.append("\n⏰ Horario: ");
                 status.append(String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute));
             }

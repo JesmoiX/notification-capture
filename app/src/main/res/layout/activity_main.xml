@@ -25,7 +25,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Captura notificaciones de Gmail"
+        android:text="Captura notificaciones de YAPE"
         android:textSize="14sp"
         android:textColor="#666666"
         android:gravity="center"
@@ -74,11 +74,11 @@
         android:layout_marginBottom="24dp"
         android:backgroundTint="#4CAF50"/>
 
-    <!-- Configuración Google Home -->
+    <!-- Configuración de Anuncios de Voz -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🔊 Anuncios en Google Home"
+        android:text="🔊 Anuncios de Voz"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#333333"
@@ -97,7 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Activar anuncios de YAPE"
+            android:text="Activar anuncios de voz"
             android:textSize="14sp"
             android:textColor="#333333"/>
 
