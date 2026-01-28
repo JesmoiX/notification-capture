@@ -177,10 +177,6 @@ public class NotificationListener extends NotificationListenerService {
             processedNotificationIds.clear();
             Log.d(TAG, "Cache de IDs limpiado (límite alcanzado)");
         }
-        
-        // Determinar tipo de fuente para logs
-        boolean isYapeNotification = packageName.contains("yape");
-        String sourceType = isYapeNotification ? "YAPE" : "Gmail";
 
         Log.d(TAG, "✅ " + sourceType + " Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
 
