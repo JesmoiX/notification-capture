@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#F5F5F5">
+
+    <!-- Logo/Título -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📱 Notification Capture"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Captura notificaciones de Gmail"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Estado -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚠️ Estado: INACTIVO"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="24dp"
+        android:textColor="#FF9800"/>
+
+    <!-- Configuración de URL -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="URL de Google Apps Script:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/urlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="https://script.google.com/macros/s/..."
+        android:inputType="textUri"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💾 Guardar URL"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#4CAF50"/>
+
+    <!-- Botón de permisos -->
+    <Button
+        android:id="@+id/openSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚙️ Configurar Permisos de Notificación"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:backgroundTint="#2196F3"/>
+
+    <!-- Instrucciones -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 Instrucciones:\n\n1. Presiona el botón de arriba\n2. Busca 'Notification Capture'\n3. Activa el interruptor\n4. Vuelve a esta app\n5. Ingresa la URL de Google Script\n6. ¡Listo! Las notificaciones se guardarán automáticamente"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:layout_marginTop="24dp"
+        android:padding="16dp"
+        android:background="#FFFFFF"/>
+
+</LinearLayout>

@@ -1,0 +1,39 @@
+# Gradle files
+.gradle/
+build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+.DS_Store
+
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Generated files
+bin/
+gen/
+out/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+.cxx/
+
+# Log Files
+*.log
+
+# Android Profiling
+*.hprof
+
+# Captures folder
+captures/
