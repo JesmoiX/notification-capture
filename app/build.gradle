@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace 'com.yapemanager.notificationcapture'
     compileSdk 33
 
     defaultConfig {
