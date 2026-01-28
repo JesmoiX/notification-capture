@@ -162,6 +162,55 @@ public class NotificationListener extends NotificationListenerService {
         capturedCount++;
         updateForegroundNotification();
         sendToGoogleSheets(title, text, packageName);
+        
+        // ═══════════════════════════════════════════════════════════
+        // ANUNCIO EN GOOGLE HOME (si está activado y contiene "YAPE")
+        // ═══════════════════════════════════════════════════════════
+        announceToGoogleHomeIfEnabled(title, text);
+    }
+    
+    private void announceToGoogleHomeIfEnabled(String title, String content) {
+        try {
+            // Verificar si los anuncios están activados
+            boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
+            
+            if (!googleHomeEnabled) {
+                Log.d(TAG, "Google Home anuncios desactivados");
+                return;
+            }
+            
+            // Verificar si contiene "YAPE" (case insensitive)
+            String titleLower = title.toLowerCase();
+            String contentLower = content.toLowerCase();
+            
+            if (!titleLower.contains("yape") && !contentLower.contains("yape")) {
+                Log.d(TAG, "No contiene YAPE, no se anuncia");
+                return;
+            }
+            
+            // Verificar horario
+            int startHour = prefs.getInt("announce_start_hour", 8);
+            int startMinute = prefs.getInt("announce_start_minute", 0);
+            int endHour = prefs.getInt("announce_end_hour", 20);
+            int endMinute = prefs.getInt("announce_end_minute", 0);
+            
+            if (!GoogleHomeAnnouncer.isWithinSchedule(startHour, startMinute, endHour, endMinute)) {
+                Log.d(TAG, "Fuera de horario configurado, no se anuncia");
+                return;
+            }
+            
+            // TODO: Reproducir sonido antes del anuncio (si está configurado)
+            
+            // Anunciar en Google Home
+            GoogleHomeAnnouncer announcer = new GoogleHomeAnnouncer(this);
+            announcer.announceYapePayment(title, content);
+            
+            Log.d(TAG, "🔊 Anuncio enviado a Google Home");
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error al anunciar en Google Home: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private boolean isGroupSummary(Notification notification) {
