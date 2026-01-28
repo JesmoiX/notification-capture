@@ -71,8 +71,8 @@
         android:text="💾 Guardar URL"
         android:textSize="16sp"
         android:padding="16dp"
-        android:layout_marginBottom=\"24dp\"
-        android:backgroundTint=\"#4CAF50\"/>
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#4CAF50"/>
 
     <!-- Selección de Fuentes -->
     <TextView
