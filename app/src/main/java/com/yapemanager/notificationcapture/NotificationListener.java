@@ -21,13 +21,18 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NotificationListener extends NotificationListenerService {
 
     private static final String TAG = "NotificationListener";
     private static final String CHANNEL_ID = "notification_capture_service";
     private static final int FOREGROUND_ID = 1001;
+    private static final long MAX_NOTIFICATION_AGE_MS = 5 * 60 * 1000; // 5 minutos
+    
     private SharedPreferences prefs;
+    private Set<String> processedNotificationIds;
     private ExecutorService executorService;
     private int capturedCount = 0;
 
@@ -35,12 +40,13 @@ public class NotificationListener extends NotificationListenerService {
     public void onCreate() {
         super.onCreate();
         prefs = getSharedPreferences("NotificationCapturePrefs", MODE_PRIVATE);
-        executorService = Executors.newFixedThreadPool(3); // Pool de 3 threads para envíos paralelos
+        executorService = Executors.newFixedThreadPool(3);
+        processedNotificationIds = new HashSet<>();
         
         // Iniciar como Foreground Service
         startForegroundService();
         
-        Log.d(TAG, "NotificationListener Service Created as Foreground");
+        Log.d(TAG, "NotificationListener Service Created as Foreground with Duplicate Detection");
     }
 
     private void startForegroundService() {
@@ -90,6 +96,28 @@ public class NotificationListener extends NotificationListenerService {
             return;
         }
 
+        // ═══════════════════════════════════════════════════════════
+        // DETECCIÓN DE DUPLICADOS - MECANISMO 1: ID único
+        // ═══════════════════════════════════════════════════════════
+        String notificationKey = sbn.getKey(); // ID único de la notificación
+        
+        if (processedNotificationIds.contains(notificationKey)) {
+            Log.d(TAG, "⚠️ DUPLICADO DETECTADO (ID): Notificación ya procesada - " + notificationKey);
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // DETECCIÓN DE DUPLICADOS - MECANISMO 2: Timestamp
+        // ═══════════════════════════════════════════════════════════
+        long postTime = sbn.getPostTime(); // Hora en que se publicó la notificación
+        long currentTime = System.currentTimeMillis();
+        long notificationAge = currentTime - postTime;
+
+        if (notificationAge > MAX_NOTIFICATION_AGE_MS) {
+            Log.d(TAG, "⚠️ DUPLICADO DETECTADO (ANTIGUO): Notificación de hace " + (notificationAge / 1000) + " segundos - Ignorando");
+            return;
+        }
+
         Notification notification = sbn.getNotification();
         if (notification == null) {
             return;
@@ -117,7 +145,18 @@ public class NotificationListener extends NotificationListenerService {
             return;
         }
 
-        Log.d(TAG, "Gmail Notification VÁLIDA - Title: " + title + ", Text: " + text);
+        // ═══════════════════════════════════════════════════════════
+        // NOTIFICACIÓN VÁLIDA - Marcar como procesada
+        // ═══════════════════════════════════════════════════════════
+        processedNotificationIds.add(notificationKey);
+        
+        // Limpiar cache si crece mucho (mantener solo últimas 1000)
+        if (processedNotificationIds.size() > 1000) {
+            processedNotificationIds.clear();
+            Log.d(TAG, "Cache de IDs limpiado (límite alcanzado)");
+        }
+
+        Log.d(TAG, "✅ Gmail Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
 
         // Enviar a Google Sheets (optimizado con thread pool)
         capturedCount++;
