@@ -5,42 +5,112 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import java.util.Locale;
 
 public class GoogleHomeAnnouncer {
     
     private static final String TAG = "GoogleHomeAnnouncer";
     private Context context;
+    private static TextToSpeech tts;
     
     public GoogleHomeAnnouncer(Context context) {
         this.context = context;
+        initializeTTS();
     }
     
     /**
-     * Anuncia un mensaje en Google Home usando Google Assistant Broadcast
+     * Inicializa el motor de Text-to-Speech
+     */
+    private void initializeTTS() {
+        if (tts == null) {
+            tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        int result = tts.setLanguage(new Locale("es", "ES"));
+                        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                            Log.e(TAG, "Idioma español no soportado, usando idioma por defecto");
+                            tts.setLanguage(Locale.getDefault());
+                        }
+                        
+                        // Configurar velocidad y tono
+                        tts.setPitch(1.0f);
+                        tts.setSpeechRate(1.0f);
+                        
+                        Log.d(TAG, "✅ TTS inicializado correctamente");
+                    } else {
+                        Log.e(TAG, "❌ Error al inicializar TTS");
+                    }
+                }
+            });
+        }
+    }
+    
+    /**
+     * Anuncia un mensaje usando Text-to-Speech del celular
+     * NOTA: Este método reproduce el audio en el CELULAR, no en Google Home
+     * Para Google Home se necesita Google Cast API (requiere configuración adicional)
+     * 
      * @param message El mensaje a anunciar
      */
     public void announce(String message) {
         try {
-            // Usar Google Assistant para hacer broadcast
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            
-            // Formato: "broadcast [mensaje]"
-            String broadcastCommand = "broadcast " + message;
-            
-            // URI para Google Assistant
-            Uri uri = Uri.parse("https://www.google.com/search?q=" + Uri.encode(broadcastCommand));
-            intent.setData(uri);
-            intent.setPackage("com.google.android.googlequicksearchbox");
+            if (tts != null) {
+                // Método 1: TTS local (funciona siempre)
+                announceLocally(message);
+                
+                // Método 2: Intentar broadcast a Google Home (puede no funcionar)
+                tryGoogleAssistantBroadcast(message);
+                
+                Log.d(TAG, "✅ Anuncio enviado: " + message);
+            } else {
+                Log.e(TAG, "❌ TTS no inicializado");
+                initializeTTS();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error al anunciar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Anuncia localmente en el celular usando TTS
+     */
+    private void announceLocally(String message) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "announcement");
+            } else {
+                tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+            }
+            Log.d(TAG, "🔊 Anuncio local reproducido");
+        } catch (Exception e) {
+            Log.e(TAG, "Error en anuncio local: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Intenta enviar broadcast a Google Home
+     * NOTA: Este método requiere interacción manual y puede no funcionar
+     */
+    private void tryGoogleAssistantBroadcast(String message) {
+        try {
+            // Método 1: Intent directo a Google Assistant
+            Intent intent = new Intent(Intent.ACTION_VOICE_COMMAND);
+            intent.putExtra("android.intent.extra.TEXT", "broadcast " + message);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             
-            context.startActivity(intent);
-            
-            Log.d(TAG, "✅ Broadcast enviado a Google Home: " + message);
-            
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+                Log.d(TAG, "📢 Broadcast intent enviado");
+            } else {
+                Log.w(TAG, "⚠️ No se pudo enviar broadcast (Google Assistant no disponible)");
+            }
         } catch (Exception e) {
-            Log.e(TAG, "❌ Error al enviar broadcast: " + e.getMessage());
-            e.printStackTrace();
+            Log.w(TAG, "⚠️ Broadcast no disponible: " + e.getMessage());
         }
     }
     
@@ -101,6 +171,17 @@ public class GoogleHomeAnnouncer {
         // Caso especial: 20:00 - 08:00 (cruza medianoche)
         else {
             return currentTimeInMinutes >= startTimeInMinutes || currentTimeInMinutes <= endTimeInMinutes;
+        }
+    }
+    
+    /**
+     * Libera recursos de TTS
+     */
+    public static void shutdown() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+            tts = null;
         }
     }
 }
