@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
     private Button openSettingsButton;
     private TextView statusText;
     private SharedPreferences prefs;
+    
+    // Source selection
+    private CheckBox yapeCheckbox;
+    private CheckBox gmailCheckbox;
     
     // Google Home controls
     private SwitchCompat googleHomeSwitch;
@@ -48,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         openSettingsButton = findViewById(R.id.openSettingsButton);
         statusText = findViewById(R.id.statusText);
+        
+        // Source checkboxes
+        yapeCheckbox = findViewById(R.id.yapeCheckbox);
+        gmailCheckbox = findViewById(R.id.gmailCheckbox);
         
         // Google Home controls
         googleHomeSwitch = findViewById(R.id.googleHomeSwitch);
@@ -89,6 +98,43 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
                 startActivity(intent);
             }
+        });
+        
+        // Checkboxes de fuentes
+        yapeCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("capture_yape", isChecked);
+            editor.apply();
+            
+            // Validar que al menos una fuente esté activa
+            if (!isChecked && !gmailCheckbox.isChecked()) {
+                Toast.makeText(this, "⚠️ Debes activar al menos una fuente", Toast.LENGTH_SHORT).show();
+                yapeCheckbox.setChecked(true);
+                return;
+            }
+            
+            Toast.makeText(this, 
+                isChecked ? "✅ Yape activado" : "❌ Yape desactivado", 
+                Toast.LENGTH_SHORT).show();
+            updateStatus();
+        });
+        
+        gmailCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("capture_gmail", isChecked);
+            editor.apply();
+            
+            // Validar que al menos una fuente esté activa
+            if (!isChecked && !yapeCheckbox.isChecked()) {
+                Toast.makeText(this, "⚠️ Debes activar al menos una fuente", Toast.LENGTH_SHORT).show();
+                gmailCheckbox.setChecked(true);
+                return;
+            }
+            
+            Toast.makeText(this, 
+                isChecked ? "✅ Gmail activado" : "❌ Gmail desactivado", 
+                Toast.LENGTH_SHORT).show();
+            updateStatus();
         });
         
         // Switch de Google Home
@@ -163,6 +209,12 @@ public class MainActivity extends AppCompatActivity {
         boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
         googleHomeSwitch.setChecked(googleHomeEnabled);
         
+        // Cargar fuentes de notificaciones
+        boolean captureYape = prefs.getBoolean("capture_yape", true);
+        boolean captureGmail = prefs.getBoolean("capture_gmail", false);
+        yapeCheckbox.setChecked(captureYape);
+        gmailCheckbox.setChecked(captureGmail);
+        
         // Cargar horario
         startHour = prefs.getInt("announce_start_hour", 8);
         startMinute = prefs.getInt("announce_start_minute", 0);
@@ -194,12 +246,24 @@ public class MainActivity extends AppCompatActivity {
         boolean hasPermission = isNotificationServiceEnabled();
         String url = prefs.getString("google_sheet_url", "");
         boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
+        boolean captureYape = prefs.getBoolean("capture_yape", true);
+        boolean captureGmail = prefs.getBoolean("capture_gmail", false);
 
         StringBuilder status = new StringBuilder();
         
         if (hasPermission && !url.isEmpty()) {
             status.append("✅ Estado: ACTIVO\n\n");
-            status.append("La app está capturando notificaciones de YAPE y enviándolas a Google Sheets.");
+            
+            // Mostrar fuentes activas
+            status.append("Capturando: ");
+            if (captureYape && captureGmail) {
+                status.append("YAPE y Gmail");
+            } else if (captureYape) {
+                status.append("YAPE");
+            } else if (captureGmail) {
+                status.append("Gmail");
+            }
+            status.append("\nEnviando a Google Sheets.");
             
             if (googleHomeEnabled) {
                 status.append("\n\n🔊 Anuncios de voz: ACTIVADOS");

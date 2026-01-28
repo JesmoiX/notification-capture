@@ -91,14 +91,32 @@ public class NotificationListener extends NotificationListenerService {
         String packageName = sbn.getPackageName();
         Log.d(TAG, "Notification from: " + packageName);
 
-        // Solo capturar notificaciones de YAPE
-        // Posibles package names: com.yape.app, com.yape, pe.com.yape
-        if (!packageName.contains("yape")) {
-            Log.d(TAG, "No es Yape, ignorando: " + packageName);
+        // Verificar preferencias de fuentes
+        boolean captureYape = prefs.getBoolean("capture_yape", true);
+        boolean captureGmail = prefs.getBoolean("capture_gmail", false);
+        
+        boolean isYape = packageName.contains("yape");
+        boolean isGmail = packageName.equals("com.google.android.gm");
+        
+        // Filtrar según preferencias
+        if (isYape && !captureYape) {
+            Log.d(TAG, "Yape desactivado en configuración, ignorando");
             return;
         }
         
-        Log.d(TAG, "✅ Notificación de YAPE detectada: " + packageName);
+        if (isGmail && !captureGmail) {
+            Log.d(TAG, "Gmail desactivado en configuración, ignorando");
+            return;
+        }
+        
+        // Si no es ni Yape ni Gmail, ignorar
+        if (!isYape && !isGmail) {
+            Log.d(TAG, "No es Yape ni Gmail, ignorando: " + packageName);
+            return;
+        }
+        
+        String sourceType = isYape ? "YAPE" : "Gmail";
+        Log.d(TAG, "✅ Notificación de " + sourceType + " detectada: " + packageName);
 
         // ═══════════════════════════════════════════════════════════
         // DETECCIÓN DE DUPLICADOS - MECANISMO 1: ID único
@@ -159,8 +177,12 @@ public class NotificationListener extends NotificationListenerService {
             processedNotificationIds.clear();
             Log.d(TAG, "Cache de IDs limpiado (límite alcanzado)");
         }
+        
+        // Determinar tipo de fuente para logs
+        boolean isYapeNotification = packageName.contains("yape");
+        String sourceType = isYapeNotification ? "YAPE" : "Gmail";
 
-        Log.d(TAG, "✅ YAPE Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
+        Log.d(TAG, "✅ " + sourceType + " Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
 
         // Enviar a Google Sheets (optimizado con thread pool)
         capturedCount++;
