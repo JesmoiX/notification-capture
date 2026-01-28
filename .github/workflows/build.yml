@@ -1,5 +1,6 @@
 name: Build Android APK
 
+# Compila automáticamente el APK en cada push
 on:
   push:
     branches: [ main, master ]
