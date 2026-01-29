@@ -24,13 +24,21 @@ public class FirebaseManager {
     
     public FirebaseManager(Context context) {
         try {
-            // Inicializar Firebase Database
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            Log.d(TAG, "🔄 Inicializando Firebase...");
+            
+            // Inicializar Firebase Database con URL explícita
+            FirebaseDatabase database = FirebaseDatabase.getInstance("https://notificationcapture-b4935-default-rtdb.firebaseio.com");
+            database.setPersistenceEnabled(true); // Habilitar persistencia offline
+            
             databaseRef = database.getReference("payments");
             isEnabled = true;
+            
             Log.d(TAG, "✅ Firebase inicializado correctamente");
+            Log.d(TAG, "   URL: https://notificationcapture-b4935-default-rtdb.firebaseio.com");
+            Log.d(TAG, "   Referencia: payments/");
         } catch (Exception e) {
             Log.e(TAG, "❌ Error al inicializar Firebase: " + e.getMessage());
+            Log.e(TAG, "   Stack trace: ", e);
             isEnabled = false;
         }
     }
@@ -43,12 +51,16 @@ public class FirebaseManager {
      * @param source Fuente (YAPE o Gmail)
      */
     public void registerPayment(String title, String content, String source) {
+        Log.d(TAG, "📝 registerPayment llamado - Source: " + source);
+        
         if (!isEnabled) {
             Log.w(TAG, "⚠️ Firebase no está habilitado, saltando registro");
             return;
         }
         
         try {
+            Log.d(TAG, "🔄 Procesando pago para Firebase...");
+            
             // Crear timestamp
             long timestamp = System.currentTimeMillis();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -71,6 +83,9 @@ public class FirebaseManager {
             // Generar ID único basado en timestamp
             String paymentId = "payment_" + timestamp;
             
+            Log.d(TAG, "💾 Guardando en Firebase con ID: " + paymentId);
+            Log.d(TAG, "   Datos: " + payment.toString());
+            
             // Guardar en Firebase
             databaseRef.child(paymentId).setValue(payment)
                 .addOnSuccessListener(aVoid -> {
@@ -79,6 +94,7 @@ public class FirebaseManager {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "❌ Error al registrar en Firebase: " + e.getMessage());
+                    Log.e(TAG, "   Detalles: ", e);
                 });
                 
         } catch (Exception e) {
