@@ -28,7 +28,6 @@ public class FirebaseManager {
             
             // Inicializar Firebase Database con URL explícita
             FirebaseDatabase database = FirebaseDatabase.getInstance("https://notificationcapture-b4935-default-rtdb.firebaseio.com");
-            database.setPersistenceEnabled(true); // Habilitar persistencia offline
             
             databaseRef = database.getReference("payments");
             isEnabled = true;
@@ -38,7 +37,8 @@ public class FirebaseManager {
             Log.d(TAG, "   Referencia: payments/");
         } catch (Exception e) {
             Log.e(TAG, "❌ Error al inicializar Firebase: " + e.getMessage());
-            Log.e(TAG, "   Stack trace: ", e);
+            Log.e(TAG, "   Tipo de error: " + e.getClass().getName());
+            e.printStackTrace();
             isEnabled = false;
         }
     }
