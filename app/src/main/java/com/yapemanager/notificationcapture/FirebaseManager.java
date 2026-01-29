@@ -26,6 +26,15 @@ public class FirebaseManager {
         try {
             Log.d(TAG, "🔄 Inicializando Firebase...");
             
+            // Inicializar FirebaseApp primero
+            try {
+                com.google.firebase.FirebaseApp.initializeApp(context);
+                Log.d(TAG, "   FirebaseApp inicializado");
+            } catch (IllegalStateException e) {
+                // Ya está inicializado, continuar
+                Log.d(TAG, "   FirebaseApp ya estaba inicializado");
+            }
+            
             // Inicializar Firebase Database con URL explícita
             FirebaseDatabase database = FirebaseDatabase.getInstance("https://notificationcapture-b4935-default-rtdb.firebaseio.com");
             
