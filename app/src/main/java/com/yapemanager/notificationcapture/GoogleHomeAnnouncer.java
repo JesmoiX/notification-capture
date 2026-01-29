@@ -78,15 +78,40 @@ public class GoogleHomeAnnouncer {
     
     /**
      * Anuncia localmente en el celular usando TTS
+     * Aumenta el volumen al máximo para que se escuche incluso en otras apps
      */
     private void announceLocally(String message) {
         try {
+            // Obtener AudioManager para controlar el volumen
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            
+            // Guardar volumen actual
+            int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            
+            // Aumentar volumen al máximo temporalmente
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
+            
+            Log.d(TAG, "🔊 Volumen aumentado: " + currentVolume + " → " + maxVolume);
+            
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // Usar QUEUE_FLUSH para interrumpir cualquier anuncio anterior
                 tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "announcement");
             } else {
                 tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
             }
-            Log.d(TAG, "🔊 Anuncio local reproducido");
+            
+            Log.d(TAG, "🔊 Anuncio local reproducido con volumen máximo");
+            
+            // Restaurar volumen después de 10 segundos
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0);
+                    Log.d(TAG, "🔊 Volumen restaurado: " + maxVolume + " → " + currentVolume);
+                }
+            }, 10000); // 10 segundos
+            
         } catch (Exception e) {
             Log.e(TAG, "Error en anuncio local: " + e.getMessage());
         }
@@ -137,14 +162,95 @@ public class GoogleHomeAnnouncer {
     }
     
     /**
-     * Anuncia un pago de YAPE
-     * @param title Título del email (ej: "Juan Pérez")
-     * @param content Contenido del email (ej: "Te transfirió S/ 50.00")
+     * Anuncia un pago de YAPE o Gmail con formato personalizado
+     * Extrae el nombre y monto del contenido
+     * 
+     * Ejemplo de contenido:
+     * "Yape! Jesús Moisés Gallegos Parlona te envió un pago por S/ 1.00"
+     * 
+     * Mensaje de salida:
+     * "CONFIRMACIÓN DE PAGO. RECIBIÓ UN YAPE DE Jesús Moisés Gallegos Parlona DE 1.00 SOLES"
+     * 
+     * @param title Título de la notificación
+     * @param content Contenido de la notificación
      */
     public void announceYapePayment(String title, String content) {
-        // Formato: "Nuevo pago recibido. [título]. [contenido]"
-        String message = "Nuevo pago recibido. " + title + ". " + content;
-        announce(message);
+        try {
+            String customMessage = buildCustomMessage(content);
+            announce(customMessage);
+        } catch (Exception e) {
+            Log.e(TAG, "Error al construir mensaje personalizado: " + e.getMessage());
+            // Fallback al mensaje original
+            String message = "Nuevo pago recibido. " + title + ". " + content;
+            announce(message);
+        }
+    }
+    
+    /**
+     * Construye un mensaje personalizado extrayendo nombre y monto
+     * 
+     * @param content Contenido de la notificación
+     * @return Mensaje personalizado
+     */
+    private String buildCustomMessage(String content) {
+        String nombre = "desconocido";
+        String monto = "0";
+        
+        try {
+            // Extraer nombre (entre "Yape!" o "!" y "te envió")
+            // Ejemplo: "Yape! Jesús Moisés Gallegos Parlona te envió un pago por S/ 1.00"
+            
+            // Buscar el patrón de nombre
+            if (content.contains("te envió")) {
+                String[] parts = content.split("te envió");
+                if (parts.length > 0) {
+                    String nombrePart = parts[0];
+                    
+                    // Limpiar "Yape!" o "!" del inicio
+                    nombrePart = nombrePart.replace("Yape!", "").replace("!", "").trim();
+                    
+                    if (!nombrePart.isEmpty()) {
+                        nombre = nombrePart;
+                    }
+                }
+            }
+            
+            // Extraer monto (después de "S/" o "S/.")
+            // Ejemplo: "S/ 1.00" o "S/1.00"
+            if (content.contains("S/")) {
+                String[] parts = content.split("S/");
+                if (parts.length > 1) {
+                    String montoPart = parts[1].trim();
+                    
+                    // Extraer solo números y punto decimal
+                    StringBuilder montoBuilder = new StringBuilder();
+                    for (char c : montoPart.toCharArray()) {
+                        if (Character.isDigit(c) || c == '.') {
+                            montoBuilder.append(c);
+                        } else if (montoBuilder.length() > 0) {
+                            // Ya encontramos el monto completo
+                            break;
+                        }
+                    }
+                    
+                    if (montoBuilder.length() > 0) {
+                        monto = montoBuilder.toString();
+                    }
+                }
+            }
+            
+            Log.d(TAG, "📝 Mensaje extraído - Nombre: " + nombre + ", Monto: " + monto);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error al extraer datos: " + e.getMessage());
+        }
+        
+        // Construir mensaje personalizado
+        String customMessage = "CONFIRMACIÓN DE PAGO. RECIBIÓ UN YAPE DE " + nombre + " DE " + monto + " SOLES";
+        
+        Log.d(TAG, "🔊 Mensaje personalizado: " + customMessage);
+        
+        return customMessage;
     }
     
     /**
