@@ -24,35 +24,37 @@ public class FirebaseManager {
     
     public FirebaseManager(Context context) {
         try {
-            Log.d(TAG, "🔄 Inicializando Firebase...");
+            Log.d(TAG, "🔄 Obteniendo instancia de Firebase...");
             
-            // Inicializar FirebaseApp primero
+            // Obtener FirebaseApp ya inicializado en MyApplication
             com.google.firebase.FirebaseApp firebaseApp;
             try {
-                firebaseApp = com.google.firebase.FirebaseApp.initializeApp(context);
-                Log.d(TAG, "   FirebaseApp inicializado: " + (firebaseApp != null ? firebaseApp.getName() : "null"));
-            } catch (IllegalStateException e) {
-                // Ya está inicializado, obtener la instancia
                 firebaseApp = com.google.firebase.FirebaseApp.getInstance();
-                Log.d(TAG, "   FirebaseApp ya estaba inicializado: " + firebaseApp.getName());
+                Log.d(TAG, "   FirebaseApp obtenido: " + firebaseApp.getName());
+            } catch (IllegalStateException e) {
+                // Si no está inicializado, intentar inicializarlo aquí (fallback)
+                Log.w(TAG, "   FirebaseApp no estaba inicializado, inicializando ahora...");
+                firebaseApp = com.google.firebase.FirebaseApp.initializeApp(context);
+                if (firebaseApp == null) {
+                    throw new IllegalStateException("No se pudo inicializar FirebaseApp");
+                }
+                Log.d(TAG, "   FirebaseApp inicializado: " + firebaseApp.getName());
             }
             
-            // Verificar que FirebaseApp esté inicializado
-            if (firebaseApp == null) {
-                throw new IllegalStateException("FirebaseApp no se pudo inicializar");
-            }
-            
-            // Inicializar Firebase Database usando el FirebaseApp
-            FirebaseDatabase database = FirebaseDatabase.getInstance(firebaseApp, "https://notificationcapture-b4935-default-rtdb.firebaseio.com");
+            // Obtener instancia de Firebase Database
+            FirebaseDatabase database = FirebaseDatabase.getInstance(
+                firebaseApp,
+                "https://notificationcapture-b4935-default-rtdb.firebaseio.com"
+            );
             
             databaseRef = database.getReference("payments");
             isEnabled = true;
             
-            Log.d(TAG, "✅ Firebase inicializado correctamente");
+            Log.d(TAG, "✅ FirebaseManager inicializado correctamente");
             Log.d(TAG, "   URL: https://notificationcapture-b4935-default-rtdb.firebaseio.com");
             Log.d(TAG, "   Referencia: payments/");
         } catch (Exception e) {
-            Log.e(TAG, "❌ Error al inicializar Firebase: " + e.getMessage());
+            Log.e(TAG, "❌ Error al inicializar FirebaseManager: " + e.getMessage());
             Log.e(TAG, "   Tipo de error: " + e.getClass().getName());
             e.printStackTrace();
             isEnabled = false;
