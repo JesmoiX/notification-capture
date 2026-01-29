@@ -27,9 +27,9 @@ TTS pronuncia: "yape" (fluido y natural)
 **AHORA:**
 ```
 10.00 → "10 soles"
-10.50 → "10 soles 50"
-100.75 → "100 soles 75"
-5.05 → "5 soles 5"
+10.50 → "10 soles con 50"
+100.75 → "100 soles con 75"
+5.05 → "5 soles con 5"
 ```
 
 ---
@@ -52,36 +52,36 @@ TTS pronuncia: "yape" (fluido y natural)
 
 **Mensaje:**
 ```
-"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE María González DE 10 soles 50"
+"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE María González DE 10 soles con 50"
 ```
 
 **Se escucha:**
 ```
-"Confirmación de pago. Recibió un yape de María González de diez soles cincuenta"
+"Confirmación de pago. Recibió un yape de María González de diez soles con cincuenta"
 ```
 
 ### **Ejemplo 3: S/ 100.75**
 
 **Mensaje:**
 ```
-"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Pedro Sánchez DE 100 soles 75"
+"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Pedro Sánchez DE 100 soles con 75"
 ```
 
 **Se escucha:**
 ```
-"Confirmación de pago. Recibió un yape de Pedro Sánchez de cien soles setenta y cinco"
+"Confirmación de pago. Recibió un yape de Pedro Sánchez de cien soles con setenta y cinco"
 ```
 
 ### **Ejemplo 4: S/ 5.05**
 
 **Mensaje:**
 ```
-"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Juan Pérez DE 5 soles 5"
+"CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Juan Pérez DE 5 soles con 5"
 ```
 
 **Se escucha:**
 ```
-"Confirmación de pago. Recibió un yape de Juan Pérez de cinco soles cinco"
+"Confirmación de pago. Recibió un yape de Juan Pérez de cinco soles con cinco"
 ```
 
 ### **Ejemplo 5: S/ 250.00**
@@ -141,12 +141,12 @@ Resultado: "10 soles 50"
 | `1.00` | `1 soles` | "un soles" |
 | `5.00` | `5 soles` | "cinco soles" |
 | `10.00` | `10 soles` | "diez soles" |
-| `10.50` | `10 soles 50` | "diez soles cincuenta" |
-| `10.05` | `10 soles 5` | "diez soles cinco" |
-| `50.25` | `50 soles 25` | "cincuenta soles veinticinco" |
+| `10.50` | `10 soles con 50` | "diez soles con cincuenta" |
+| `10.05` | `10 soles con 5` | "diez soles con cinco" |
+| `50.25` | `50 soles con 25` | "cincuenta soles con veinticinco" |
 | `100.00` | `100 soles` | "cien soles" |
-| `100.75` | `100 soles 75` | "cien soles setenta y cinco" |
-| `250.50` | `250 soles 50` | "doscientos cincuenta soles cincuenta" |
+| `100.75` | `100 soles con 75` | "cien soles con setenta y cinco" |
+| `250.50` | `250 soles con 50` | "doscientos cincuenta soles con cincuenta" |
 
 ---
 
@@ -163,9 +163,9 @@ Resultado: "10 soles 50"
 ### **Caso 2: Con decimales**
 
 ```java
-"10.50" → "10 soles 50"
-"10.05" → "10 soles 5"  // Elimina el cero a la izquierda
-"10.75" → "10 soles 75"
+"10.50" → "10 soles con 50"
+"10.05" → "10 soles con 5"  // Elimina el cero a la izquierda
+"10.75" → "10 soles con 75"
 ```
 
 ### **Código:**
@@ -186,7 +186,7 @@ private String formatearMontoPeruano(String monto) {
     }
     
     int decimales = Integer.parseInt(parteDecimal);
-    return parteEntera + " soles " + decimales;
+    return parteEntera + " soles con " + decimales;
 }
 ```
 
@@ -227,15 +227,15 @@ TTS lee: "RECIBIÓ UN YAPE DE..."
 ### **Prueba 2: S/ 10.50**
 ```
 1. Pide que te yapeen S/ 10.50
-2. Escucha: "Confirmación de pago. Recibió un yape de [nombre] de diez soles cincuenta"
-3. Verifica que dice "cincuenta" al final
+2. Escucha: "Confirmación de pago. Recibió un yape de [nombre] de diez soles con cincuenta"
+3. Verifica que dice "con cincuenta" al final
 ```
 
 ### **Prueba 3: S/ 5.05**
 ```
 1. Pide que te yapeen S/ 5.05
-2. Escucha: "Confirmación de pago. Recibió un yape de [nombre] de cinco soles cinco"
-3. Verifica que dice "cinco" (no "cero cinco")
+2. Escucha: "Confirmación de pago. Recibió un yape de [nombre] de cinco soles con cinco"
+3. Verifica que dice "con cinco" (no "con cero cinco")
 ```
 
 ### **Prueba 4: Pronunciación de "YAPE"**
@@ -260,15 +260,15 @@ TTS lee: "RECIBIÓ UN YAPE DE..."
 ### **Monto con decimales (S/ 10.50):**
 ```
 📝 Mensaje extraído - Nombre: María, Monto: 10.50
-💰 Monto formateado: 10 soles 50
-🔊 Mensaje personalizado: CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE María DE 10 soles 50
+💰 Monto formateado: 10 soles con 50
+🔊 Mensaje personalizado: CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE María DE 10 soles con 50
 ```
 
 ### **Monto con decimales pequeños (S/ 5.05):**
 ```
 📝 Mensaje extraído - Nombre: Pedro, Monto: 5.05
-💰 Monto formateado: 5 soles 5
-🔊 Mensaje personalizado: CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Pedro DE 5 soles 5
+💰 Monto formateado: 5 soles con 5
+🔊 Mensaje personalizado: CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE Pedro DE 5 soles con 5
 ```
 
 ---
@@ -279,7 +279,7 @@ TTS lee: "RECIBIÓ UN YAPE DE..."
 ```
 Cliente yapea S/ 5.50
 ↓
-Escuchas: "Confirmación de pago. Recibió un yape de Juan Pérez de cinco soles cincuenta"
+Escuchas: "Confirmación de pago. Recibió un yape de Juan Pérez de cinco soles con cincuenta"
 ↓
 Entregas el producto
 ```
@@ -326,14 +326,14 @@ Sabes exactamente cuánto pagó
 **Formato de Monto:**
 ```
 ❌ ANTES: "10.50 soles" → "diez punto cincuenta soles"
-✅ AHORA: "10 soles 50" → "diez soles cincuenta"
+✅ AHORA: "10 soles con 50" → "diez soles con cincuenta"
 ```
 
 **Ejemplos Completos:**
 ```
 ✅ "Confirmación de pago. Recibió un yape de Jesús de diez soles"
-✅ "Confirmación de pago. Recibió un yape de María de diez soles cincuenta"
-✅ "Confirmación de pago. Recibió un yape de Pedro de cien soles setenta y cinco"
+✅ "Confirmación de pago. Recibió un yape de María de diez soles con cincuenta"
+✅ "Confirmación de pago. Recibió un yape de Pedro de cien soles con setenta y cinco"
 ```
 
 ---

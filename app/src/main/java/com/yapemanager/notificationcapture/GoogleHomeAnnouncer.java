@@ -262,9 +262,9 @@ public class GoogleHomeAnnouncer {
      * 
      * Ejemplos:
      * - "10.00" → "10 soles"
-     * - "10.50" → "10 soles 50"
-     * - "100.75" → "100 soles 75"
-     * - "5.05" → "5 soles 5"
+     * - "10.50" → "10 soles con 50"
+     * - "100.75" → "100 soles con 75"
+     * - "5.05" → "5 soles con 5"
      * 
      * @param monto Monto en formato decimal (ej: "10.50")
      * @return Monto formateado al estilo peruano
@@ -291,8 +291,8 @@ public class GoogleHomeAnnouncer {
             // "05" → "5", "50" → "50"
             int decimales = Integer.parseInt(parteDecimal);
             
-            // Formato peruano: "10 soles 50"
-            return parteEntera + " soles " + decimales;
+            // Formato peruano: "10 soles con 50"
+            return parteEntera + " soles con " + decimales;
             
         } catch (Exception e) {
             Log.e(TAG, "Error al formatear monto: " + e.getMessage());
