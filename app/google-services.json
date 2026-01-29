@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "576269581874",
+    "firebase_url": "https://notificationcapture-b4935-default-rtdb.firebaseio.com",
     "project_id": "notificationcapture-b4935",
     "storage_bucket": "notificationcapture-b4935.firebasestorage.app"
   },
