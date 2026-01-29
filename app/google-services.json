@@ -1,0 +1,38 @@
+{
+  "_comment": "ESTE ES UN ARCHIVO DE EJEMPLO - DEBES REEMPLAZARLO CON TU PROPIO google-services.json",
+  "_instructions": [
+    "1. Ve a https://console.firebase.google.com/",
+    "2. Crea un nuevo proyecto o selecciona uno existente",
+    "3. Agrega una app Android con el package name: com.yapemanager.notificationcapture",
+    "4. Descarga el archivo google-services.json",
+    "5. Reemplaza este archivo con el que descargaste",
+    "6. Compila la app"
+  ],
+  "project_info": {
+    "project_number": "123456789012",
+    "project_id": "tu-proyecto-firebase",
+    "storage_bucket": "tu-proyecto-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+        "android_client_info": {
+          "package_name": "com.yapemanager.notificationcapture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "TU_API_KEY_AQUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

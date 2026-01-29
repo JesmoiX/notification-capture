@@ -35,6 +35,7 @@ public class NotificationListener extends NotificationListenerService {
     private Set<String> processedNotificationIds;
     private ExecutorService executorService;
     private int capturedCount = 0;
+    private FirebaseManager firebaseManager;
 
     @Override
     public void onCreate() {
@@ -42,6 +43,9 @@ public class NotificationListener extends NotificationListenerService {
         prefs = getSharedPreferences("NotificationCapturePrefs", MODE_PRIVATE);
         executorService = Executors.newFixedThreadPool(3);
         processedNotificationIds = new HashSet<>();
+        
+        // Inicializar Firebase
+        firebaseManager = new FirebaseManager(this);
         
         // Iniciar como Foreground Service
         startForegroundService();
@@ -207,6 +211,12 @@ public class NotificationListener extends NotificationListenerService {
         capturedCount++;
         updateForegroundNotification();
         sendToGoogleSheets(title, text, packageName);
+        
+        // Registrar en Firebase
+        if (firebaseManager != null && firebaseManager.isEnabled()) {
+            firebaseManager.registerPayment(title, text, sourceType);
+            Log.d(TAG, "📊 Pago enviado a Firebase");
+        }
         
         // ═══════════════════════════════════════════════════════════
         // ANUNCIO DE VOZ (si está activado)
