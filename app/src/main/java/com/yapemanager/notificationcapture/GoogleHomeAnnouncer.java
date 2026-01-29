@@ -249,8 +249,9 @@ public class GoogleHomeAnnouncer {
         String montoFormateado = formatearMontoPeruano(monto);
         
         // Construir mensaje personalizado
-        // Usar "LLAPE" en lugar de "YAPE" para que TTS lo pronuncie correctamente
-        String customMessage = "CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE " + nombre + " DE " + montoFormateado;
+        // Usar "PAGO" en lugar de "YAPE" para evitar problemas de pronunciación
+        // El TTS pronuncia "PAGO" de forma natural y fluida
+        String customMessage = "CONFIRMACIÓN DE PAGO. RECIBIÓ UN PAGO DE " + nombre + " DE " + montoFormateado;
         
         Log.d(TAG, "🔊 Mensaje personalizado: " + customMessage);
         
