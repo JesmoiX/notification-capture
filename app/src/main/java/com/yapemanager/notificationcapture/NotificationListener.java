@@ -154,6 +154,29 @@ public class NotificationListener extends NotificationListenerService {
         String title = extras.getString(Notification.EXTRA_TITLE, "");
         String text = extras.getCharSequence(Notification.EXTRA_TEXT, "").toString();
 
+        // ═══════════════════════════════════════════════════════════
+        // FILTRO ADICIONAL PARA GMAIL: Solo emails relacionados con Yape
+        // ═══════════════════════════════════════════════════════════
+        if (isGmail) {
+            // Verificar que el email contenga palabras clave de Yape
+            String titleLower = title.toLowerCase();
+            String textLower = text.toLowerCase();
+            
+            boolean isYapeRelated = titleLower.contains("yape") || 
+                                   titleLower.contains("pago") || 
+                                   titleLower.contains("confirmación") ||
+                                   textLower.contains("yape") || 
+                                   textLower.contains("te envió") ||
+                                   textLower.contains("s/");
+            
+            if (!isYapeRelated) {
+                Log.d(TAG, "❌ Gmail: Email no relacionado con Yape, ignorando - Title: " + title);
+                return;
+            }
+            
+            Log.d(TAG, "✅ Gmail: Email relacionado con Yape detectado");
+        }
+
         // FILTRAR NOTIFICACIONES DE RESUMEN
         // Ignorar notificaciones que son resúmenes (ej: "6 mensajes nuevos")
         if (isGroupSummary(notification) || isSummaryNotification(title, text)) {
