@@ -27,16 +27,23 @@ public class FirebaseManager {
             Log.d(TAG, "🔄 Inicializando Firebase...");
             
             // Inicializar FirebaseApp primero
+            com.google.firebase.FirebaseApp firebaseApp;
             try {
-                com.google.firebase.FirebaseApp.initializeApp(context);
-                Log.d(TAG, "   FirebaseApp inicializado");
+                firebaseApp = com.google.firebase.FirebaseApp.initializeApp(context);
+                Log.d(TAG, "   FirebaseApp inicializado: " + (firebaseApp != null ? firebaseApp.getName() : "null"));
             } catch (IllegalStateException e) {
-                // Ya está inicializado, continuar
-                Log.d(TAG, "   FirebaseApp ya estaba inicializado");
+                // Ya está inicializado, obtener la instancia
+                firebaseApp = com.google.firebase.FirebaseApp.getInstance();
+                Log.d(TAG, "   FirebaseApp ya estaba inicializado: " + firebaseApp.getName());
             }
             
-            // Inicializar Firebase Database con URL explícita
-            FirebaseDatabase database = FirebaseDatabase.getInstance("https://notificationcapture-b4935-default-rtdb.firebaseio.com");
+            // Verificar que FirebaseApp esté inicializado
+            if (firebaseApp == null) {
+                throw new IllegalStateException("FirebaseApp no se pudo inicializar");
+            }
+            
+            // Inicializar Firebase Database usando el FirebaseApp
+            FirebaseDatabase database = FirebaseDatabase.getInstance(firebaseApp, "https://notificationcapture-b4935-default-rtdb.firebaseio.com");
             
             databaseRef = database.getReference("payments");
             isEnabled = true;
