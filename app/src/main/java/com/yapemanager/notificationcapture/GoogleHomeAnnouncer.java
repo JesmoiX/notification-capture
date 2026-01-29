@@ -245,12 +245,60 @@ public class GoogleHomeAnnouncer {
             Log.e(TAG, "Error al extraer datos: " + e.getMessage());
         }
         
+        // Formatear monto al estilo peruano
+        String montoFormateado = formatearMontoPeruano(monto);
+        
         // Construir mensaje personalizado
-        String customMessage = "CONFIRMACIÓN DE PAGO. RECIBIÓ UN YAPE DE " + nombre + " DE " + monto + " SOLES";
+        // Usar "LLAPE" en lugar de "YAPE" para que TTS lo pronuncie correctamente
+        String customMessage = "CONFIRMACIÓN DE PAGO. RECIBIÓ UN LLAPE DE " + nombre + " DE " + montoFormateado;
         
         Log.d(TAG, "🔊 Mensaje personalizado: " + customMessage);
         
         return customMessage;
+    }
+    
+    /**
+     * Formatea el monto al estilo peruano
+     * 
+     * Ejemplos:
+     * - "10.00" → "10 soles"
+     * - "10.50" → "10 soles 50"
+     * - "100.75" → "100 soles 75"
+     * - "5.05" → "5 soles 5"
+     * 
+     * @param monto Monto en formato decimal (ej: "10.50")
+     * @return Monto formateado al estilo peruano
+     */
+    private String formatearMontoPeruano(String monto) {
+        try {
+            // Separar parte entera y decimal
+            String[] parts = monto.split("\\.");
+            
+            if (parts.length == 1) {
+                // No hay decimales
+                return parts[0] + " soles";
+            }
+            
+            String parteEntera = parts[0];
+            String parteDecimal = parts[1];
+            
+            // Verificar si los decimales son "00"
+            if (parteDecimal.equals("00") || parteDecimal.equals("0")) {
+                return parteEntera + " soles";
+            }
+            
+            // Eliminar ceros a la izquierda de los decimales
+            // "05" → "5", "50" → "50"
+            int decimales = Integer.parseInt(parteDecimal);
+            
+            // Formato peruano: "10 soles 50"
+            return parteEntera + " soles " + decimales;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error al formatear monto: " + e.getMessage());
+            // Fallback: devolver monto original + "soles"
+            return monto + " soles";
+        }
     }
     
     /**
