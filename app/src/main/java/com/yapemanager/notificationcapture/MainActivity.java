@@ -23,29 +23,23 @@ public class MainActivity extends AppCompatActivity {
     private Button openSettingsButton;
     private TextView statusText;
     private SharedPreferences prefs;
-    
+
     // Device code
     private TextView deviceCodeText;
     private TextView deviceStatusText;
     private Button copyCodeButton;
     private Button refreshStatusButton;
     private DeviceCodeManager deviceCodeManager;
-    
+
     // Source selection
     private CheckBox yapeCheckbox;
     private CheckBox gmailCheckbox;
-    
+
     // Google Home controls
     private SwitchCompat googleHomeSwitch;
-    private LinearLayout scheduleLayout;
-    private Button startTimeButton;
-    private Button endTimeButton;
+    // Google Home controls
+    private SwitchCompat googleHomeSwitch;
     private Button testAnnouncementButton;
-    
-    private int startHour = 8;
-    private int startMinute = 0;
-    private int endHour = 20;
-    private int endMinute = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +54,20 @@ public class MainActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         openSettingsButton = findViewById(R.id.openSettingsButton);
         statusText = findViewById(R.id.statusText);
-        
+
         // Device code views
         deviceCodeText = findViewById(R.id.deviceCodeText);
         deviceStatusText = findViewById(R.id.deviceStatusText);
         copyCodeButton = findViewById(R.id.copyCodeButton);
         refreshStatusButton = findViewById(R.id.refreshStatusButton);
-        
+
         // Source checkboxes
         yapeCheckbox = findViewById(R.id.yapeCheckbox);
         gmailCheckbox = findViewById(R.id.gmailCheckbox);
-        
+
+        // Google Home controls
         // Google Home controls
         googleHomeSwitch = findViewById(R.id.googleHomeSwitch);
-        scheduleLayout = findViewById(R.id.scheduleLayout);
-        startTimeButton = findViewById(R.id.startTimeButton);
-        endTimeButton = findViewById(R.id.endTimeButton);
         testAnnouncementButton = findViewById(R.id.testAnnouncementButton);
 
         // Inicializar DeviceCodeManager
@@ -116,18 +108,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        
+
         // Copiar código de dispositivo
         copyCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("Device Code", deviceCodeManager.getDeviceCode());
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(
+                        CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Device Code",
+                        deviceCodeManager.getDeviceCode());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(MainActivity.this, "✅ Código copiado: " + deviceCodeManager.getDeviceCode(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "✅ Código copiado: " + deviceCodeManager.getDeviceCode(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         // Actualizar estado desde Firebase
         refreshStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,10 +133,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onStatusUpdated(String status) {
                         runOnUiThread(() -> {
                             updateDeviceCodeDisplay();
-                            Toast.makeText(MainActivity.this, "✅ Estado actualizado: " + status, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "✅ Estado actualizado: " + status, Toast.LENGTH_SHORT)
+                                    .show();
                         });
                     }
-                    
+
                     @Override
                     public void onError(String error) {
                         runOnUiThread(() -> {
@@ -151,93 +147,59 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-        
+
         // Checkboxes de fuentes
         yapeCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("capture_yape", isChecked);
             editor.apply();
-            
+
             // Validar que al menos una fuente esté activa
             if (!isChecked && !gmailCheckbox.isChecked()) {
                 Toast.makeText(this, "⚠️ Debes activar al menos una fuente", Toast.LENGTH_SHORT).show();
                 yapeCheckbox.setChecked(true);
                 return;
             }
-            
-            Toast.makeText(this, 
-                isChecked ? "✅ Yape activado" : "❌ Yape desactivado", 
-                Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this,
+                    isChecked ? "✅ Yape activado" : "❌ Yape desactivado",
+                    Toast.LENGTH_SHORT).show();
             updateStatus();
         });
-        
+
         gmailCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("capture_gmail", isChecked);
             editor.apply();
-            
+
             // Validar que al menos una fuente esté activa
             if (!isChecked && !yapeCheckbox.isChecked()) {
                 Toast.makeText(this, "⚠️ Debes activar al menos una fuente", Toast.LENGTH_SHORT).show();
                 gmailCheckbox.setChecked(true);
                 return;
             }
-            
-            Toast.makeText(this, 
-                isChecked ? "✅ Gmail activado" : "❌ Gmail desactivado", 
-                Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this,
+                    isChecked ? "✅ Gmail activado" : "❌ Gmail desactivado",
+                    Toast.LENGTH_SHORT).show();
             updateStatus();
         });
-        
+
         // Switch de Google Home
         googleHomeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("google_home_enabled", isChecked);
             editor.apply();
-            
+
             // Mostrar/ocultar controles de horario y prueba
-            scheduleLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            // Mostrar/ocultar controles de horario y prueba
             testAnnouncementButton.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            
-            Toast.makeText(MainActivity.this, 
-                isChecked ? "🔊 Anuncios activados" : "🔇 Anuncios desactivados", 
-                Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(MainActivity.this,
+                    isChecked ? "🔊 Anuncios activados" : "🔇 Anuncios desactivados",
+                    Toast.LENGTH_SHORT).show();
         });
-        
-        // Botón de hora de inicio
-        startTimeButton.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                MainActivity.this,
-                (view, hourOfDay, minute) -> {
-                    startHour = hourOfDay;
-                    startMinute = minute;
-                    startTimeButton.setText(String.format("%02d:%02d", hourOfDay, minute));
-                    saveSchedule();
-                },
-                startHour,
-                startMinute,
-                true
-            );
-            timePickerDialog.show();
-        });
-        
-        // Botón de hora de fin
-        endTimeButton.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                MainActivity.this,
-                (view, hourOfDay, minute) -> {
-                    endHour = hourOfDay;
-                    endMinute = minute;
-                    endTimeButton.setText(String.format("%02d:%02d", hourOfDay, minute));
-                    saveSchedule();
-                },
-                endHour,
-                endMinute,
-                true
-            );
-            timePickerDialog.show();
-        });
-        
+
         // Botón de prueba
         testAnnouncementButton.setOnClickListener(v -> {
             GoogleHomeAnnouncer announcer = new GoogleHomeAnnouncer(this);
@@ -251,47 +213,24 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         updateStatus();
     }
-    
+
     private void loadSavedSettings() {
         // Cargar URL
         String savedUrl = prefs.getString("google_sheet_url", "");
         urlInput.setText(savedUrl);
-        
+
         // Cargar configuración de Google Home
         boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
         googleHomeSwitch.setChecked(googleHomeEnabled);
-        
+
         // Cargar fuentes de notificaciones
         boolean captureYape = prefs.getBoolean("capture_yape", true);
         boolean captureGmail = prefs.getBoolean("capture_gmail", false);
         yapeCheckbox.setChecked(captureYape);
         gmailCheckbox.setChecked(captureGmail);
-        
-        // Cargar horario
-        startHour = prefs.getInt("announce_start_hour", 8);
-        startMinute = prefs.getInt("announce_start_minute", 0);
-        endHour = prefs.getInt("announce_end_hour", 20);
-        endMinute = prefs.getInt("announce_end_minute", 0);
-        
-        startTimeButton.setText(String.format("%02d:%02d", startHour, startMinute));
-        endTimeButton.setText(String.format("%02d:%02d", endHour, endMinute));
-        
+
         // Mostrar/ocultar controles según estado
-        scheduleLayout.setVisibility(googleHomeEnabled ? View.VISIBLE : View.GONE);
         testAnnouncementButton.setVisibility(googleHomeEnabled ? View.VISIBLE : View.GONE);
-    }
-    
-    private void saveSchedule() {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("announce_start_hour", startHour);
-        editor.putInt("announce_start_minute", startMinute);
-        editor.putInt("announce_end_hour", endHour);
-        editor.putInt("announce_end_minute", endMinute);
-        editor.apply();
-        
-        Toast.makeText(this, "⏰ Horario guardado: " + 
-            String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute), 
-            Toast.LENGTH_SHORT).show();
     }
 
     private void updateStatus() {
@@ -302,10 +241,10 @@ public class MainActivity extends AppCompatActivity {
         boolean captureGmail = prefs.getBoolean("capture_gmail", false);
 
         StringBuilder status = new StringBuilder();
-        
+
         if (hasPermission && !url.isEmpty()) {
             status.append("✅ Estado: ACTIVO\n\n");
-            
+
             // Mostrar fuentes activas
             status.append("Capturando: ");
             if (captureYape && captureGmail) {
@@ -316,13 +255,11 @@ public class MainActivity extends AppCompatActivity {
                 status.append("Gmail");
             }
             status.append("\nEnviando a Google Sheets.");
-            
+
             if (googleHomeEnabled) {
                 status.append("\n\n🔊 Anuncios de voz: ACTIVADOS");
-                status.append("\n⏰ Horario: ");
-                status.append(String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute));
             }
-            
+
             statusText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
         } else if (!hasPermission) {
             status.append("⚠️ Estado: INACTIVO\n\n");
@@ -334,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
             status.append("Ingresa la URL de Google Apps Script arriba.");
             statusText.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
         }
-        
+
         statusText.setText(status.toString());
     }
 
@@ -351,13 +288,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-    
+
     private void updateDeviceCodeDisplay() {
         String code = deviceCodeManager.getDeviceCode();
         String status = deviceCodeManager.getDeviceStatus();
-        
+
         deviceCodeText.setText(code);
-        
+
         // Actualizar texto y color según el estado
         if ("approved".equals(status)) {
             deviceStatusText.setText("✅ Estado: Aprobado - Captura activa");

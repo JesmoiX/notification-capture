@@ -230,47 +230,9 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <!-- Horario de anuncios -->
-    <LinearLayout
-        android:id="@+id/scheduleLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_marginBottom="12dp"
-        android:visibility="gone">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="⏰ Horario de anuncios"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="12dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Desde:"
-                android:textSize="14sp"
-                android:layout_marginEnd="8dp"/>
-
-            <Button
-                android:id="@+id/startTimeButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="08:00"
-                android:textSize="14sp"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#333333"/>
 
             <TextView
                 android:layout_width="wrap_content"
