@@ -185,13 +185,27 @@ public class DeviceCodeManager {
                     @Override
                     public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
                         String newStatus = snapshot.getValue(String.class);
-                        if (newStatus != null && !newStatus.equals(deviceStatus)) {
-                            deviceStatus = newStatus;
-                            prefs.edit().putString(KEY_DEVICE_STATUS, deviceStatus).apply();
-                            Log.d(TAG, "✅ Estado actualizado: " + deviceStatus);
-                        }
-                        if (callback != null) {
-                            callback.onStatusUpdated(deviceStatus);
+                        Log.d(TAG, "🔄 Estado leído desde Firebase: " + newStatus);
+                        Log.d(TAG, "   Estado actual en app: " + deviceStatus);
+                        
+                        if (newStatus != null) {
+                            if (!newStatus.equals(deviceStatus)) {
+                                Log.d(TAG, "✅ Estado cambió de '" + deviceStatus + "' a '" + newStatus + "'");
+                                deviceStatus = newStatus;
+                                prefs.edit().putString(KEY_DEVICE_STATUS, deviceStatus).apply();
+                            } else {
+                                Log.d(TAG, "ℹ️ Estado sin cambios: " + deviceStatus);
+                            }
+                            
+                            // Siempre llamar al callback con el estado actual
+                            if (callback != null) {
+                                callback.onStatusUpdated(newStatus);
+                            }
+                        } else {
+                            Log.e(TAG, "❌ Estado es null en Firebase");
+                            if (callback != null) {
+                                callback.onError("Estado no encontrado en Firebase");
+                            }
                         }
                     }
                     
