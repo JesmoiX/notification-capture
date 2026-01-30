@@ -21,8 +21,10 @@ public class FirebaseManager {
     private static final String TAG = "FirebaseManager";
     private DatabaseReference databaseRef;
     private boolean isEnabled = false;
+    private Context context;
     
     public FirebaseManager(Context context) {
+        this.context = context;
         try {
             Log.d(TAG, "🔄 Obteniendo instancia de Firebase...");
             
