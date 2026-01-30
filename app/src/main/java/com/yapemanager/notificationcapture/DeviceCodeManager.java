@@ -42,6 +42,45 @@ public class DeviceCodeManager {
             Log.d(TAG, "✅ Nuevo código generado: " + deviceCode);
         } else {
             Log.d(TAG, "📱 Código existente: " + deviceCode + " (Status: " + deviceStatus + ")");
+            // Sincronizar estado desde Firebase
+            syncStatusFromFirebase();
+        }
+    }
+    
+    /**
+     * Sincroniza el estado desde Firebase (sin callback)
+     */
+    private void syncStatusFromFirebase() {
+        try {
+            com.google.firebase.FirebaseApp firebaseApp = com.google.firebase.FirebaseApp.getInstance();
+            com.google.firebase.database.FirebaseDatabase database = 
+                com.google.firebase.database.FirebaseDatabase.getInstance(
+                    firebaseApp,
+                    "https://notificationcapture-b4935-default-rtdb.firebaseio.com"
+                );
+            
+            database.getReference("devices").child(deviceCode).child("status")
+                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                        String newStatus = snapshot.getValue(String.class);
+                        if (newStatus != null && !newStatus.equals(deviceStatus)) {
+                            deviceStatus = newStatus;
+                            prefs.edit().putString(KEY_DEVICE_STATUS, deviceStatus).apply();
+                            Log.d(TAG, "✅ Estado sincronizado desde Firebase: " + deviceStatus);
+                        } else {
+                            Log.d(TAG, "ℹ️ Estado sin cambios: " + deviceStatus);
+                        }
+                    }
+                    
+                    @Override
+                    public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                        Log.e(TAG, "❌ Error al sincronizar estado: " + error.getMessage());
+                    }
+                });
+                
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error al sincronizar desde Firebase: " + e.getMessage());
         }
     }
     
