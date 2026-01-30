@@ -156,7 +156,15 @@ public class DeviceCodeManager {
     /**
      * Obtiene el estado de aprobación
      */
+    /**
+     * Obtiene el estado de aprobación (siempre actualizado desde prefs)
+     */
     public String getDeviceStatus() {
+        // Recargar siempre desde SharedPreferences para asegurar sincronización entre
+        // procesos
+        if (prefs != null) {
+            deviceStatus = prefs.getString(KEY_DEVICE_STATUS, "pending");
+        }
         return deviceStatus;
     }
 
@@ -164,7 +172,9 @@ public class DeviceCodeManager {
      * Verifica si el dispositivo está aprobado
      */
     public boolean isApproved() {
-        return "approved".equals(deviceStatus);
+        // Asegurar que tenemos el valor más reciente
+        String currentStatus = getDeviceStatus();
+        return "approved".equals(currentStatus);
     }
 
     /**
