@@ -30,7 +30,7 @@ public class NotificationListener extends NotificationListenerService {
     private static final String CHANNEL_ID = "notification_capture_service";
     private static final int FOREGROUND_ID = 1001;
     private static final long MAX_NOTIFICATION_AGE_MS = 5 * 60 * 1000; // 5 minutos
-    
+
     private SharedPreferences prefs;
     private Set<String> processedNotificationIds;
     private ExecutorService executorService;
@@ -44,26 +44,27 @@ public class NotificationListener extends NotificationListenerService {
         prefs = getSharedPreferences("NotificationCapturePrefs", MODE_PRIVATE);
         executorService = Executors.newFixedThreadPool(3);
         processedNotificationIds = new HashSet<>();
-        
+
         // Inicializar Firebase
         firebaseManager = new FirebaseManager(this);
-        
+
         // Inicializar DeviceCodeManager
         deviceCodeManager = new DeviceCodeManager(this);
-        
+
         // Iniciar como Foreground Service
         startForegroundService();
-        
+
         Log.d(TAG, "NotificationListener Service Created as Foreground with Duplicate Detection");
-        Log.d(TAG, "📱 Device Code: " + deviceCodeManager.getDeviceCode() + " | Status: " + deviceCodeManager.getDeviceStatus());
+        Log.d(TAG, "📱 Device Code: " + deviceCodeManager.getDeviceCode() + " | Status: "
+                + deviceCodeManager.getDeviceStatus());
     }
 
     private void startForegroundService() {
         createNotificationChannel();
-        
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, 
-            notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Notification Capture Activo")
@@ -82,10 +83,9 @@ public class NotificationListener extends NotificationListenerService {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Notification Capture Service",
-                    NotificationManager.IMPORTANCE_LOW
-            );
+                    NotificationManager.IMPORTANCE_LOW);
             channel.setDescription("Mantiene el servicio activo para capturar notificaciones");
-            
+
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
@@ -104,35 +104,37 @@ public class NotificationListener extends NotificationListenerService {
         // VERIFICAR APROBACIÓN DEL DISPOSITIVO
         // ═══════════════════════════════════════════════════════════
         if (!deviceCodeManager.isApproved()) {
-            Log.w(TAG, "⚠️ DISPOSITIVO NO APROBADO - Código: " + deviceCodeManager.getDeviceCode() + " | Estado: " + deviceCodeManager.getDeviceStatus());
-            Log.w(TAG, "   Las notificaciones no se capturarán hasta que el dispositivo sea aprobado en el panel admin");
+            Log.w(TAG, "⚠️ DISPOSITIVO NO APROBADO - Código: " + deviceCodeManager.getDeviceCode() + " | Estado: "
+                    + deviceCodeManager.getDeviceStatus());
+            Log.w(TAG,
+                    "   Las notificaciones no se capturarán hasta que el dispositivo sea aprobado en el panel admin");
             return;
         }
 
         // Verificar preferencias de fuentes
         boolean captureYape = prefs.getBoolean("capture_yape", true);
         boolean captureGmail = prefs.getBoolean("capture_gmail", false);
-        
+
         boolean isYape = packageName.contains("yape");
         boolean isGmail = packageName.equals("com.google.android.gm");
-        
+
         // Filtrar según preferencias
         if (isYape && !captureYape) {
             Log.d(TAG, "Yape desactivado en configuración, ignorando");
             return;
         }
-        
+
         if (isGmail && !captureGmail) {
             Log.d(TAG, "Gmail desactivado en configuración, ignorando");
             return;
         }
-        
+
         // Si no es ni Yape ni Gmail, ignorar
         if (!isYape && !isGmail) {
             Log.d(TAG, "No es Yape ni Gmail, ignorando: " + packageName);
             return;
         }
-        
+
         String sourceType = isYape ? "YAPE" : "Gmail";
         Log.d(TAG, "✅ Notificación de " + sourceType + " detectada: " + packageName);
 
@@ -140,7 +142,7 @@ public class NotificationListener extends NotificationListenerService {
         // DETECCIÓN DE DUPLICADOS - MECANISMO 1: ID único
         // ═══════════════════════════════════════════════════════════
         String notificationKey = sbn.getKey(); // ID único de la notificación
-        
+
         if (processedNotificationIds.contains(notificationKey)) {
             Log.d(TAG, "⚠️ DUPLICADO DETECTADO (ID): Notificación ya procesada - " + notificationKey);
             return;
@@ -154,7 +156,8 @@ public class NotificationListener extends NotificationListenerService {
         long notificationAge = currentTime - postTime;
 
         if (notificationAge > MAX_NOTIFICATION_AGE_MS) {
-            Log.d(TAG, "⚠️ DUPLICADO DETECTADO (ANTIGUO): Notificación de hace " + (notificationAge / 1000) + " segundos - Ignorando");
+            Log.d(TAG, "⚠️ DUPLICADO DETECTADO (ANTIGUO): Notificación de hace " + (notificationAge / 1000)
+                    + " segundos - Ignorando");
             return;
         }
 
@@ -176,23 +179,24 @@ public class NotificationListener extends NotificationListenerService {
         // FILTRO ADICIONAL PARA GMAIL: Solo emails relacionados con Yape
         // ═══════════════════════════════════════════════════════════
         if (isGmail) {
-            // Verificar que el email contenga palabras clave de Yape
-            String titleLower = title.toLowerCase();
-            String textLower = text.toLowerCase();
-            
-            boolean isYapeRelated = titleLower.contains("yape") || 
-                                   titleLower.contains("pago") || 
-                                   titleLower.contains("confirmación") ||
-                                   textLower.contains("yape") || 
-                                   textLower.contains("te envió") ||
-                                   textLower.contains("s/");
-            
-            if (!isYapeRelated) {
-                Log.d(TAG, "❌ Gmail: Email no relacionado con Yape, ignorando - Title: " + title);
-                return;
-            }
-            
-            Log.d(TAG, "✅ Gmail: Email relacionado con Yape detectado");
+            // MODO PRUEBA: Capturar todo correo de Gmail
+            // String titleLower = title.toLowerCase();
+            // String textLower = text.toLowerCase();
+
+            // boolean isYapeRelated = titleLower.contains("yape") ||
+            // titleLower.contains("pago") ||
+            // titleLower.contains("confirmación") ||
+            // textLower.contains("yape") ||
+            // textLower.contains("te envió") ||
+            // textLower.contains("s/");
+
+            // if (!isYapeRelated) {
+            // Log.d(TAG, "❌ Gmail: Email no relacionado con Yape, ignorando - Title: " +
+            // title);
+            // return;
+            // }
+
+            Log.d(TAG, "✅ Gmail: Email detectado (Filtro desactivado para pruebas)");
         }
 
         // FILTRAR NOTIFICACIONES DE RESUMEN
@@ -212,61 +216,62 @@ public class NotificationListener extends NotificationListenerService {
         // NOTIFICACIÓN VÁLIDA - Marcar como procesada
         // ═══════════════════════════════════════════════════════════
         processedNotificationIds.add(notificationKey);
-        
+
         // Limpiar cache si crece mucho (mantener solo últimas 1000)
         if (processedNotificationIds.size() > 1000) {
             processedNotificationIds.clear();
             Log.d(TAG, "Cache de IDs limpiado (límite alcanzado)");
         }
 
-        Log.d(TAG, "✅ " + sourceType + " Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: " + (notificationAge / 1000) + "s)");
+        Log.d(TAG, "✅ " + sourceType + " Notification VÁLIDA - Title: " + title + ", Text: " + text + " (Edad: "
+                + (notificationAge / 1000) + "s)");
 
         // Enviar a Google Sheets (optimizado con thread pool)
         capturedCount++;
         updateForegroundNotification();
         sendToGoogleSheets(title, text, packageName);
-        
+
         // Registrar en Firebase
         if (firebaseManager != null && firebaseManager.isEnabled()) {
             firebaseManager.registerPayment(title, text, sourceType);
             Log.d(TAG, "📊 Pago enviado a Firebase");
         }
-        
+
         // ═══════════════════════════════════════════════════════════
         // ANUNCIO DE VOZ (si está activado)
         // ═══════════════════════════════════════════════════════════
         announceToGoogleHomeIfEnabled(title, text);
     }
-    
+
     private void announceToGoogleHomeIfEnabled(String title, String content) {
         try {
             // Verificar si los anuncios están activados
             boolean googleHomeEnabled = prefs.getBoolean("google_home_enabled", false);
-            
+
             if (!googleHomeEnabled) {
                 Log.d(TAG, "Anuncios de voz desactivados");
                 return;
             }
-            
+
             // Verificar horario
             int startHour = prefs.getInt("announce_start_hour", 8);
             int startMinute = prefs.getInt("announce_start_minute", 0);
             int endHour = prefs.getInt("announce_end_hour", 20);
             int endMinute = prefs.getInt("announce_end_minute", 0);
-            
+
             if (!GoogleHomeAnnouncer.isWithinSchedule(startHour, startMinute, endHour, endMinute)) {
                 Log.d(TAG, "Fuera de horario configurado, no se anuncia");
                 return;
             }
-            
+
             // TODO: Reproducir sonido antes del anuncio (si está configurado)
-            
+
             // Anunciar con TTS local
             GoogleHomeAnnouncer announcer = new GoogleHomeAnnouncer(this);
             announcer.announceYapePayment(title, content);
-            
+
             Log.d(TAG, "🔊 Anuncio de voz enviado");
-            
+
         } catch (Exception e) {
             Log.e(TAG, "Error al anunciar: " + e.getMessage());
             e.printStackTrace();
@@ -281,22 +286,22 @@ public class NotificationListener extends NotificationListenerService {
         // Detectar patrones de notificaciones de resumen
         String lowerTitle = title.toLowerCase();
         String lowerText = text.toLowerCase();
-        
+
         // Patrones comunes de resumen
         return lowerTitle.contains("mensajes nuevos") ||
-               lowerTitle.contains("new messages") ||
-               lowerTitle.contains("mensajes sin leer") ||
-               lowerTitle.matches("\\d+\\s+mensaje.*") || // "6 mensajes nuevos"
-               lowerText.contains("mensajes nuevos") ||
-               lowerText.matches("\\d+\\s+mensaje.*");
+                lowerTitle.contains("new messages") ||
+                lowerTitle.contains("mensajes sin leer") ||
+                lowerTitle.matches("\\d+\\s+mensaje.*") || // "6 mensajes nuevos"
+                lowerText.contains("mensajes nuevos") ||
+                lowerText.matches("\\d+\\s+mensaje.*");
     }
 
     private void updateForegroundNotification() {
         NotificationManager manager = getSystemService(NotificationManager.class);
         if (manager != null) {
             Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, 
-                notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Notification Capture Activo")
@@ -323,7 +328,7 @@ public class NotificationListener extends NotificationListenerService {
             public void run() {
                 try {
                     String googleSheetUrl = prefs.getString("google_sheet_url", "");
-                    
+
                     if (googleSheetUrl.isEmpty()) {
                         Log.e(TAG, "Google Sheet URL not configured");
                         return;
@@ -334,7 +339,8 @@ public class NotificationListener extends NotificationListenerService {
                     jsonData.put("title", title);
                     jsonData.put("content", content);
                     jsonData.put("app", app);
-                    jsonData.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
+                    jsonData.put("timestamp",
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
 
                     // Enviar POST request con timeout optimizado
                     URL url = new URL(googleSheetUrl);
@@ -355,10 +361,10 @@ public class NotificationListener extends NotificationListenerService {
                     int responseCode = conn.getResponseCode();
                     Log.d(TAG, "Google Sheets Response Code: " + responseCode);
 
-                    if (responseCode == HttpURLConnection.HTTP_OK || 
-                        responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
-                        responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
-                        responseCode == 302) {
+                    if (responseCode == HttpURLConnection.HTTP_OK ||
+                            responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
+                            responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
+                            responseCode == 302) {
                         Log.d(TAG, "✅ Data sent successfully to Google Sheets");
                     } else {
                         Log.e(TAG, "❌ Failed to send data. Response code: " + responseCode);
