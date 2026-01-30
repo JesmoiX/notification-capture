@@ -28,12 +28,28 @@ public class MyApplication extends Application {
         try {
             Log.d(TAG, "🔄 Inicializando Firebase en Application...");
             
-            // Inicializar FirebaseApp
-            FirebaseApp firebaseApp = FirebaseApp.initializeApp(this);
+            // Crear FirebaseOptions manualmente (sin depender de google-services.json)
+            com.google.firebase.FirebaseOptions options = new com.google.firebase.FirebaseOptions.Builder()
+                .setProjectId("notificationcapture-b4935")
+                .setApplicationId("1:576269581874:android:6dc581812fa06c6db5c62b")
+                .setApiKey("AIzaSyA5O4gFFL4WuAVVEjk6PuvVRg1bOL_n_Jk")
+                .setDatabaseUrl("https://notificationcapture-b4935-default-rtdb.firebaseio.com")
+                .build();
+            
+            Log.d(TAG, "   FirebaseOptions creado manualmente");
+            
+            // Inicializar FirebaseApp con las opciones
+            FirebaseApp firebaseApp;
+            try {
+                firebaseApp = FirebaseApp.initializeApp(this, options);
+                Log.d(TAG, "✅ FirebaseApp inicializado: " + firebaseApp.getName());
+            } catch (IllegalStateException e) {
+                // Ya existe, obtener la instancia
+                firebaseApp = FirebaseApp.getInstance();
+                Log.d(TAG, "✅ FirebaseApp ya existía: " + firebaseApp.getName());
+            }
             
             if (firebaseApp != null) {
-                Log.d(TAG, "✅ FirebaseApp inicializado: " + firebaseApp.getName());
-                
                 // Obtener instancia de Firebase Database
                 FirebaseDatabase database = FirebaseDatabase.getInstance(
                     firebaseApp,
@@ -51,7 +67,7 @@ public class MyApplication extends Application {
                 Log.d(TAG, "✅ Firebase Database configurado correctamente");
                 Log.d(TAG, "   URL: https://notificationcapture-b4935-default-rtdb.firebaseio.com");
             } else {
-                Log.e(TAG, "❌ FirebaseApp.initializeApp() retornó null");
+                Log.e(TAG, "❌ FirebaseApp es null después de inicialización");
             }
             
         } catch (Exception e) {
