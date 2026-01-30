@@ -37,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Google Home controls
     private SwitchCompat googleHomeSwitch;
-    // Google Home controls
-    private SwitchCompat googleHomeSwitch;
+
     private Button testAnnouncementButton;
 
     @Override
