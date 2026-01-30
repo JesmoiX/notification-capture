@@ -234,25 +234,6 @@
 
 
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hasta:"
-                android:textSize="14sp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"/>
-
-            <Button
-                android:id="@+id/endTimeButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="20:00"
-                android:textSize="14sp"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#333333"/>
-        </LinearLayout>
-    </LinearLayout>
 
     <!-- Botón de prueba -->
     <Button
