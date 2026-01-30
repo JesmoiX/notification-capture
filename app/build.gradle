@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
 }
 
 android {
@@ -36,3 +35,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-analytics'
 }
+
+// Aplicar plugin de Google Services al final
+apply plugin: 'com.google.gms.google-services'
