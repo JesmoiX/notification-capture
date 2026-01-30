@@ -253,17 +253,6 @@ public class NotificationListener extends NotificationListenerService {
                 return;
             }
 
-            // Verificar horario
-            int startHour = prefs.getInt("announce_start_hour", 8);
-            int startMinute = prefs.getInt("announce_start_minute", 0);
-            int endHour = prefs.getInt("announce_end_hour", 20);
-            int endMinute = prefs.getInt("announce_end_minute", 0);
-
-            if (!GoogleHomeAnnouncer.isWithinSchedule(startHour, startMinute, endHour, endMinute)) {
-                Log.d(TAG, "Fuera de horario configurado, no se anuncia");
-                return;
-            }
-
             // TODO: Reproducir sonido antes del anuncio (si está configurado)
 
             // Anunciar con TTS local
