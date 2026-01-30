@@ -84,7 +84,16 @@
                 android:layout_height="wrap_content"
                 android:text="📋 Copiar"
                 android:textSize="12sp"
+                android:layout_marginEnd="8dp"
                 android:backgroundTint="#4CAF50"/>
+
+            <Button
+                android:id="@+id/refreshStatusButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔄 Actualizar"
+                android:textSize="12sp"
+                android:backgroundTint="#2196F3"/>
         </LinearLayout>
 
         <TextView

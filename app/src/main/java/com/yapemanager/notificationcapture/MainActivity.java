@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView deviceCodeText;
     private TextView deviceStatusText;
     private Button copyCodeButton;
+    private Button refreshStatusButton;
     private DeviceCodeManager deviceCodeManager;
     
     // Source selection
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         deviceCodeText = findViewById(R.id.deviceCodeText);
         deviceStatusText = findViewById(R.id.deviceStatusText);
         copyCodeButton = findViewById(R.id.copyCodeButton);
+        refreshStatusButton = findViewById(R.id.refreshStatusButton);
         
         // Source checkboxes
         yapeCheckbox = findViewById(R.id.yapeCheckbox);
@@ -123,6 +125,30 @@ public class MainActivity extends AppCompatActivity {
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Device Code", deviceCodeManager.getDeviceCode());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, "✅ Código copiado: " + deviceCodeManager.getDeviceCode(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        // Actualizar estado desde Firebase
+        refreshStatusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "🔄 Actualizando estado...", Toast.LENGTH_SHORT).show();
+                deviceCodeManager.updateStatusFromFirebase(new DeviceCodeManager.StatusCallback() {
+                    @Override
+                    public void onStatusUpdated(String status) {
+                        runOnUiThread(() -> {
+                            updateDeviceCodeDisplay();
+                            Toast.makeText(MainActivity.this, "✅ Estado actualizado: " + status, Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(MainActivity.this, "❌ Error: " + error, Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
             }
         });
         
