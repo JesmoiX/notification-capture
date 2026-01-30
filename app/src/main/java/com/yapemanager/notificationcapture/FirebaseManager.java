@@ -87,8 +87,13 @@ public class FirebaseManager {
             // Extraer información del pago
             PaymentInfo info = extractPaymentInfo(content);
             
+            // Obtener código de dispositivo
+            DeviceCodeManager deviceCodeManager = new DeviceCodeManager(context);
+            String deviceCode = deviceCodeManager.getDeviceCode();
+            
             // Crear objeto de pago
             Map<String, Object> payment = new HashMap<>();
+            payment.put("deviceCode", deviceCode);
             payment.put("timestamp", timestamp);
             payment.put("date", formattedDate);
             payment.put("title", title);

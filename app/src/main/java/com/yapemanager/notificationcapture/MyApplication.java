@@ -22,6 +22,19 @@ public class MyApplication extends Application {
         
         // Inicializar Firebase
         initializeFirebase();
+        
+        // Inicializar código de dispositivo
+        initializeDeviceCode();
+    }
+    
+    private void initializeDeviceCode() {
+        try {
+            DeviceCodeManager deviceCodeManager = new DeviceCodeManager(this);
+            Log.d(TAG, "📱 Código de dispositivo: " + deviceCodeManager.getDeviceCode());
+            Log.d(TAG, "   Estado: " + deviceCodeManager.getDeviceStatus());
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error al inicializar código de dispositivo: " + e.getMessage());
+        }
     }
     
     private void initializeFirebase() {

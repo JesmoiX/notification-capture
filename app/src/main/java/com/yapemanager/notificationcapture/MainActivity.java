@@ -24,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView statusText;
     private SharedPreferences prefs;
     
+    // Device code
+    private TextView deviceCodeText;
+    private TextView deviceStatusText;
+    private Button copyCodeButton;
+    private DeviceCodeManager deviceCodeManager;
+    
     // Source selection
     private CheckBox yapeCheckbox;
     private CheckBox gmailCheckbox;
@@ -54,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         openSettingsButton = findViewById(R.id.openSettingsButton);
         statusText = findViewById(R.id.statusText);
         
+        // Device code views
+        deviceCodeText = findViewById(R.id.deviceCodeText);
+        deviceStatusText = findViewById(R.id.deviceStatusText);
+        copyCodeButton = findViewById(R.id.copyCodeButton);
+        
         // Source checkboxes
         yapeCheckbox = findViewById(R.id.yapeCheckbox);
         gmailCheckbox = findViewById(R.id.gmailCheckbox);
@@ -64,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         startTimeButton = findViewById(R.id.startTimeButton);
         endTimeButton = findViewById(R.id.endTimeButton);
         testAnnouncementButton = findViewById(R.id.testAnnouncementButton);
+
+        // Inicializar DeviceCodeManager
+        deviceCodeManager = new DeviceCodeManager(this);
+        updateDeviceCodeDisplay();
 
         // Cargar configuración guardada
         loadSavedSettings();
@@ -97,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
                 startActivity(intent);
+            }
+        });
+        
+        // Copiar código de dispositivo
+        copyCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Device Code", deviceCodeManager.getDeviceCode());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "✅ Código copiado: " + deviceCodeManager.getDeviceCode(), Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -298,5 +324,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+    
+    private void updateDeviceCodeDisplay() {
+        String code = deviceCodeManager.getDeviceCode();
+        String status = deviceCodeManager.getDeviceStatus();
+        
+        deviceCodeText.setText(code);
+        
+        // Actualizar texto y color según el estado
+        if ("approved".equals(status)) {
+            deviceStatusText.setText("✅ Estado: Aprobado - Captura activa");
+            deviceStatusText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        } else if ("rejected".equals(status)) {
+            deviceStatusText.setText("❌ Estado: Rechazado - Contacta al administrador");
+            deviceStatusText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+        } else {
+            deviceStatusText.setText("⏳ Estado: Pendiente de aprobación");
+            deviceStatusText.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+        }
     }
 }

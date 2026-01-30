@@ -36,6 +36,7 @@ public class NotificationListener extends NotificationListenerService {
     private ExecutorService executorService;
     private int capturedCount = 0;
     private FirebaseManager firebaseManager;
+    private DeviceCodeManager deviceCodeManager;
 
     @Override
     public void onCreate() {
@@ -47,10 +48,14 @@ public class NotificationListener extends NotificationListenerService {
         // Inicializar Firebase
         firebaseManager = new FirebaseManager(this);
         
+        // Inicializar DeviceCodeManager
+        deviceCodeManager = new DeviceCodeManager(this);
+        
         // Iniciar como Foreground Service
         startForegroundService();
         
         Log.d(TAG, "NotificationListener Service Created as Foreground with Duplicate Detection");
+        Log.d(TAG, "📱 Device Code: " + deviceCodeManager.getDeviceCode() + " | Status: " + deviceCodeManager.getDeviceStatus());
     }
 
     private void startForegroundService() {
@@ -94,6 +99,15 @@ public class NotificationListener extends NotificationListenerService {
 
         String packageName = sbn.getPackageName();
         Log.d(TAG, "Notification from: " + packageName);
+
+        // ═══════════════════════════════════════════════════════════
+        // VERIFICAR APROBACIÓN DEL DISPOSITIVO
+        // ═══════════════════════════════════════════════════════════
+        if (!deviceCodeManager.isApproved()) {
+            Log.w(TAG, "⚠️ DISPOSITIVO NO APROBADO - Código: " + deviceCodeManager.getDeviceCode() + " | Estado: " + deviceCodeManager.getDeviceStatus());
+            Log.w(TAG, "   Las notificaciones no se capturarán hasta que el dispositivo sea aprobado en el panel admin");
+            return;
+        }
 
         // Verificar preferencias de fuentes
         boolean captureYape = prefs.getBoolean("capture_yape", true);
