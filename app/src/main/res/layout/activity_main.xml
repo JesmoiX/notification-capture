@@ -177,7 +177,7 @@
                                 <ImageView
                                     android:layout_width="16dp"
                                     android:layout_height="16dp"
-                                    android:src="@android:drawable/ic_menu_login"
+                                    android:src="@drawable/ic_input_source"
                                     app:tint="#9CA3AF"
                                     android:layout_marginEnd="4dp"/>
                                 <TextView
