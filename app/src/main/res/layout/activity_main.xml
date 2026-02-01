@@ -23,28 +23,43 @@
             <!-- HEADER -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:background="#4CAF50">
+                android:layout_height="240dp"
+                android:background="@drawable/bg_header_rounded">
 
-                <!-- Decorative Circles (Simple Views) -->
+                <!-- Decorative Circles (Simple Views - Transparency adjusted) -->
                 <View
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:layout_gravity="top|end"
-                    android:layout_marginTop="-20dp"
-                    android:layout_marginEnd="-20dp"
+                    android:layout_marginTop="-30dp"
+                    android:layout_marginEnd="-30dp"
                     android:background="@android:drawable/dialog_holo_light_frame"
-                    android:backgroundTint="#22FFFFFF"
-                    />
+                    android:backgroundTint="#1AFFFFFF" />
+                
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginBottom="40dp"
+                    android:layout_marginStart="-20dp"
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:backgroundTint="#1A000000" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingTop="48dp"
+                    android:paddingTop="56dp"
                     android:paddingStart="24dp"
                     android:paddingEnd="24dp"
                     android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        app:tint="#FFFFFF"
+                        android:layout_marginEnd="12dp"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -55,7 +70,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🔔 Notification Capture"
+                            android:text="Notification Capture"
                             android:textColor="#FFFFFF"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -66,7 +81,7 @@
                             android:text="Captura notificaciones de YAPE"
                             android:textColor="#E8F5E9"
                             android:textSize="14sp"
-                            android:layout_marginTop="4dp"/>
+                            android:layout_marginTop="2dp"/>
                     </LinearLayout>
 
                     <ImageButton
@@ -74,9 +89,8 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="?selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_menu_preferences"
-                        android:padding="8dp"
-                        app:tint="#FFFFFF" />
+                        android:src="@drawable/ic_settings_white"
+                        android:padding="8dp" />
 
                 </LinearLayout>
             </FrameLayout>
@@ -86,15 +100,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginTop="-60dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp"
+                android:layout_marginTop="-80dp">
 
                 <!-- STATUS CARD -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="8dp"
                     app:cardBackgroundColor="#FFFFFF"
                     android:layout_marginBottom="24dp">
 
@@ -102,14 +118,21 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="24dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
+                            android:layout_marginBottom="20dp">
+
+                            <View 
+                                android:layout_width="12dp"
+                                android:layout_height="12dp"
+                                android:background="@android:drawable/radiobutton_off_background"
+                                android:backgroundTint="#4CAF50"
+                                android:layout_marginEnd="8dp"/>
 
                             <TextView
                                 android:id="@+id/statusText"
@@ -117,9 +140,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Estado: ACTIVO"
-                                android:textSize="16sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold"
-                                android:textColor="#4CAF50"/>
+                                android:textColor="#1F2937"/>
                             
                             <TextView
                                 android:layout_width="wrap_content"
@@ -127,66 +150,131 @@
                                 android:text="En línea"
                                 android:background="#E8F5E9"
                                 android:textColor="#2E7D32"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:paddingTop="2dp"
-                                android:paddingBottom="2dp"
-                                android:textSize="10sp"
-                                android:textStyle="bold"/>
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:backgroundTint="#DCFCE7"/>
                         </LinearLayout>
 
-                        <!-- Sources Badges -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="FUENTES ACTIVAS"
-                            android:textSize="10sp"
-                            android:textColor="#9E9E9E"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="8dp"/>
-
-                       <LinearLayout
+                        <!-- Sources Box -->
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            
-                             <!-- Yape Badge -->
-                            <LinearLayout
+                            android:orientation="vertical"
+                            android:background="#F9FAFB"
+                            android:padding="16dp"
+                            android:layout_marginBottom="8dp">
+
+                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="#F3F4F6"
-                                android:padding="8dp"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical"
-                                android:layout_marginEnd="8dp">
-
+                                android:layout_marginBottom="12dp">
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:src="@android:drawable/ic_menu_login"
+                                    app:tint="#9CA3AF"
+                                    android:layout_marginEnd="4dp"/>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="💰 Yape"
-                                    android:textSize="12sp"
+                                    android:text="Fuentes"
+                                    android:textSize="14sp"
                                     android:textStyle="bold"
-                                    android:textColor="#374151"/>
-                            </LinearLayout>
+                                    android:textColor="#4B5563"/>
+                             </LinearLayout>
 
-                            <!-- Gmail Badge -->
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="#F3F4F6"
-                                android:padding="8dp"
                                 android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:layout_marginEnd="8dp">
+                                android:layout_marginBottom="8dp">
                                 
+                                 <!-- Yape Badge -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="#FFFFFF"
+                                    android:paddingStart="12dp"
+                                    android:paddingEnd="12dp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginEnd="12dp"
+                                    android:elevation="1dp">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_yape_purple"
+                                        android:layout_marginEnd="6dp"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Yape"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="#374151"/>
+                                </LinearLayout>
+
+                                <!-- Gmail Badge -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="#FFFFFF"
+                                    android:paddingStart="12dp"
+                                    android:paddingEnd="12dp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:elevation="1dp">
+                                     <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_gmail_red"
+                                        android:layout_marginEnd="6dp"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Gmail"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="#374151"/>
+                                </LinearLayout>
+                            </LinearLayout>
+                            
+                             <!-- Voice Badge (New) -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#EFF6FF"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:elevation="0dp">
+                                 <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_voice_blue"
+                                    android:layout_marginEnd="6dp"/>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="📧 Gmail"
-                                    android:textSize="12sp"
+                                    android:text="Voz Activa"
+                                    android:textSize="14sp"
                                     android:textStyle="bold"
-                                    android:textColor="#374151"/>
+                                    android:textColor="#1D4ED8"/>
                             </LinearLayout>
+
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -195,8 +283,8 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="6dp"
                     app:cardBackgroundColor="#FFFFFF"
                     android:layout_marginBottom="24dp">
 
@@ -204,32 +292,45 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="24dp">
 
-                        <TextView
+                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🔑 Código de Dispositivo"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#F59E0B"
-                            android:layout_marginBottom="12dp"/>
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@android:drawable/ic_btn_speak_now"
+                                app:tint="#F59E0B"
+                                android:layout_marginEnd="8dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Código de Dispositivo"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="#1F2937"/>
+                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/deviceCodeText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="EVN5G9AL"
-                            android:textSize="28sp"
+                            android:textSize="32sp"
                             android:textStyle="bold"
                             android:textColor="#4CAF50"
                             android:gravity="center"
                             android:background="#F9FAFB"
-                            android:padding="16dp"
+                            android:padding="20dp"
+                            android:letterSpacing="0.05"
                             android:fontFamily="monospace"
-                            android:layout_marginBottom="16dp"/>
+                            android:layout_marginBottom="20dp"/>
 
-                        <TextView
+                         <TextView
                             android:id="@+id/deviceStatusText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -237,7 +338,7 @@
                             android:gravity="center"
                             android:textSize="12sp"
                             android:textColor="#9E9E9E"
-                            android:layout_marginBottom="16dp"/>
+                            android:visibility="gone"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -254,6 +355,9 @@
                                 android:backgroundTint="#4CAF50"
                                 android:textColor="#FFFFFF"
                                 android:textStyle="bold"
+                                android:paddingTop="12dp"
+                                android:paddingBottom="12dp"
+                                app:cornerRadius="10dp"
                                 android:layout_marginEnd="8dp"/>
 
                             <Button
@@ -265,32 +369,53 @@
                                 android:backgroundTint="#3B82F6"
                                 android:textColor="#FFFFFF"
                                 android:textStyle="bold"
+                                android:paddingTop="12dp"
+                                android:paddingBottom="12dp"
+                                app:cornerRadius="10dp"
                                 android:layout_marginStart="8dp"/>
                         </LinearLayout>
-
-                        <TextView
+                        
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="💡 Comparte este código con el administrador"
-                            android:textSize="12sp"
-                            android:gravity="center"
-                            android:layout_marginTop="16dp"
-                            android:textColor="#9CA3AF"/>
+                            android:orientation="horizontal"
+                            android:background="#FFFBEB"
+                            android:padding="12dp"
+                            android:layout_marginTop="20dp"
+                            android:gravity="center_vertical">
+                            
+                             <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@android:drawable/ic_dialog_info"
+                                app:tint="#F59E0B"
+                                android:layout_marginEnd="8dp"/>
+                                
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Comparte este código con el administrador para activar la captura."
+                                android:textSize="12sp"
+                                android:textColor="#4B5563"/>
+                        </LinearLayout>
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- PERMISSION BUTTON -->
+                <!-- PERMISSION BUTTON (Big Blue) -->
                 <Button
                     android:id="@+id/openSettingsButton"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="64dp"
                     android:text="⚙️   CONFIGURAR PERMISOS"
                     android:backgroundTint="#3B82F6"
-                    android:textSize="14sp"
-                    app:iconPadding="8dp"
+                    android:textSize="15sp"
+                    android:letterSpacing="0.02"
+                    app:iconPadding="10dp"
                     android:textStyle="bold"
-                    app:cornerRadius="12dp"
+                    app:cornerRadius="16dp"
+                    android:elevation="4dp"
+                    android:stateListAnimator="@null"
                     android:layout_marginBottom="24dp"/>
 
                  <!-- INSTRUCTIONS (Simplified) -->
