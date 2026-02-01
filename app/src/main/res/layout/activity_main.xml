@@ -1,272 +1,551 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#F5F5F5">
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#F3F4F6">
 
-    <!-- Logo/Título -->
-    <TextView
+    <!-- DASHBOARD SCREEN -->
+    <ScrollView
+        android:id="@+id/dashboard_screen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📱 Notification Capture"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:gravity="center"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Captura notificaciones de YAPE"
-        android:textSize="14sp"
-        android:textColor="#666666"
-        android:gravity="center"
-        android:layout_marginBottom="32dp"/>
-
-    <!-- Estado -->
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="⚠️ Estado: INACTIVO"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:background="#FFFFFF"
-        android:layout_marginBottom="16dp"
-        android:textColor="#FF9800"/>
-
-    <!-- Código de Dispositivo -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_marginBottom="24dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔑 Código de Dispositivo"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="8dp"/>
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/deviceCodeText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="XXXXXXXX"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#2196F3"
-                android:fontFamily="monospace"/>
+            <!-- HEADER -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:background="#4CAF50">
 
-            <Button
-                android:id="@+id/copyCodeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📋 Copiar"
-                android:textSize="12sp"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="#4CAF50"/>
+                <!-- Decorative Circles (Simple Views) -->
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="-20dp"
+                    android:layout_marginEnd="-20dp"
+                    android:background="@android:drawable/dialog_holo_light_frame"
+                    android:backgroundTint="#22FFFFFF"
+                    />
 
-            <Button
-                android:id="@+id/refreshStatusButton"
-                android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="48dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🔔 Notification Capture"
+                            android:textColor="#FFFFFF"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Captura notificaciones de YAPE"
+                            android:textColor="#E8F5E9"
+                            android:textSize="14sp"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/toSettingsBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_preferences"
+                        android:padding="8dp"
+                        app:tint="#FFFFFF" />
+
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- MAIN CONTENT CONTAINER (Overlap Header) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔄 Actualizar"
-                android:textSize="12sp"
-                android:backgroundTint="#2196F3"/>
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="-60dp">
+
+                <!-- STATUS CARD -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    android:layout_marginBottom="24dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                            <TextView
+                                android:id="@+id/statusText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Estado: ACTIVO"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="#4CAF50"/>
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="En línea"
+                                android:background="#E8F5E9"
+                                android:textColor="#2E7D32"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="2dp"
+                                android:textSize="10sp"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <!-- Sources Badges -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FUENTES ACTIVAS"
+                            android:textSize="10sp"
+                            android:textColor="#9E9E9E"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp"/>
+
+                       <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            
+                             <!-- Yape Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#F3F4F6"
+                                android:padding="8dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginEnd="8dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💰 Yape"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#374151"/>
+                            </LinearLayout>
+
+                            <!-- Gmail Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#F3F4F6"
+                                android:padding="8dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginEnd="8dp">
+                                
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="📧 Gmail"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#374151"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- DEVICE CODE CARD -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    android:layout_marginBottom="24dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🔑 Código de Dispositivo"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#F59E0B"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            android:id="@+id/deviceCodeText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="EVN5G9AL"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="#4CAF50"
+                            android:gravity="center"
+                            android:background="#F9FAFB"
+                            android:padding="16dp"
+                            android:fontFamily="monospace"
+                            android:layout_marginBottom="16dp"/>
+
+                        <TextView
+                            android:id="@+id/deviceStatusText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Estado: Consultando..."
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:textColor="#9E9E9E"
+                            android:layout_marginBottom="16dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <Button
+                                android:id="@+id/copyCodeButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="📋 COPIAR"
+                                android:backgroundTint="#4CAF50"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="8dp"/>
+
+                            <Button
+                                android:id="@+id/refreshStatusButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="🔄 ACTUALIZAR"
+                                android:backgroundTint="#3B82F6"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:layout_marginStart="8dp"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="💡 Comparte este código con el administrador"
+                            android:textSize="12sp"
+                            android:gravity="center"
+                            android:layout_marginTop="16dp"
+                            android:textColor="#9CA3AF"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- PERMISSION BUTTON -->
+                <Button
+                    android:id="@+id/openSettingsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="⚙️   CONFIGURAR PERMISOS"
+                    android:backgroundTint="#3B82F6"
+                    android:textSize="14sp"
+                    app:iconPadding="8dp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="24dp"/>
+
+                 <!-- INSTRUCTIONS (Simplified) -->
+                 <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp"
+                        android:orientation="vertical">
+                         <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ℹ️ Instrucciones"
+                            android:layout_marginBottom="8dp"
+                            android:textStyle="bold"
+                            android:textColor="#6B7280"/>
+                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#6B7280"
+                            android:textSize="12sp"
+                            android:text="1. Presiona el botón azul. \n2. Activa 'Notification Capture'.\n3. Configura la URL en Ajustes (arriba derecha).\n4. ¡Listo!"/>
+                    </LinearLayout>
+                 </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Versión 2.0.5 Modern UI"
+                    android:gravity="center"
+                    android:layout_marginTop="24dp"
+                    android:textSize="10sp"
+                    android:textColor="#BDBDBD"/>
+
+            </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:id="@+id/deviceStatusText"
+    <!-- SETTINGS SCREEN (Initially Hidden) -->
+    <ScrollView
+        android:id="@+id/settings_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="gone"
+        android:background="#F3F4F6">
+        
+       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Estado: Pendiente de aprobación"
-            android:textSize="12sp"
-            android:textColor="#FF9800"
-            android:layout_marginTop="8dp"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="💡 Comparte este código con el administrador para activar la captura de notificaciones"
-            android:textSize="11sp"
-            android:textColor="#999999"
-            android:layout_marginTop="8dp"/>
-    </LinearLayout>
+            <!-- HEADER -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="#4CAF50">
 
-    <!-- Configuración de URL -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="URL de Google Apps Script:"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="8dp"/>
+                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="48dp"
+                    android:paddingStart="24dp"
+                    android:gravity="center_vertical">
+                    
+                    <ImageButton
+                        android:id="@+id/backToDashboardBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_revert"
+                        android:padding="8dp"
+                        app:tint="#FFFFFF"
+                        android:layout_marginEnd="16dp"/>
 
-    <EditText
-        android:id="@+id/urlInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="https://script.google.com/macros/s/..."
-        android:inputType="textUri"
-        android:padding="12dp"
-        android:background="#FFFFFF"
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Configuración"
+                            android:textColor="#FFFFFF"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ajustes y preferencias"
+                            android:textColor="#E8F5E9"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="💾 Guardar URL"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#4CAF50"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:layout_marginTop="-60dp">
+                
+                 <!-- URL CONFIG CARD -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    android:layout_marginBottom="24dp">
 
-    <!-- Selección de Fuentes -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📲 Fuentes de Notificaciones"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="12dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="☁️ Destino de Datos"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3B82F6"
+                            android:layout_marginBottom="16dp"/>
+                        
+                         <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="URL de Google Apps Script"
+                            android:layout_marginBottom="8dp"
+                            android:textColor="#6B7280"
+                            android:textSize="12sp"/>
+                            
+                        <EditText
+                            android:id="@+id/urlInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:drawable/edit_text"
+                            android:padding="12dp"
+                            android:hint="https://script.google.com/..."
+                            android:inputType="textUri"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="16dp"/>
+                            
+                        <Button
+                            android:id="@+id/saveButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:text="💾  GUARDAR URL"
+                            android:backgroundTint="#4CAF50"/>
+                            
+                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+                
+                 <!-- PREFERENCES CARD -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_marginBottom="24dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🎛️ Preferencias"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#6B7280"
+                            android:layout_marginBottom="16dp"/>
+                         
+                        <!-- Yape Switch -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="💰 Notificaciones YAPE"
+                                android:textStyle="bold"
+                                android:textColor="#374151"/>
+                            <CheckBox
+                                android:id="@+id/yapeCheckbox"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+                        
+                         <!-- Gmail Switch -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="📧 Notificaciones Gmail"
+                                android:textStyle="bold"
+                                android:textColor="#374151"/>
+                            <CheckBox
+                                android:id="@+id/gmailCheckbox"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+                        
+                         <!-- Voice Switch -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="🔊 Anuncios de Voz"
+                                android:textStyle="bold"
+                                android:textColor="#374151"/>
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/googleHomeSwitch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+                        
+                        <Button
+                            android:id="@+id/testAnnouncementButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Prueba de Voz"
+                            android:backgroundTint="#FF9800"
+                            android:visibility="gone"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Selecciona qué notificaciones capturar:"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:layout_marginBottom="12dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-        <CheckBox
-            android:id="@+id/yapeCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="💰 Notificaciones de YAPE"
-            android:textSize="14sp"
-            android:checked="true"/>
-
-        <CheckBox
-            android:id="@+id/gmailCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📧 Notificaciones de Gmail"
-            android:textSize="14sp"
-            android:checked="false"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="💡 Puedes activar ambas fuentes simultáneamente"
-            android:textSize="11sp"
-            android:textColor="#999999"
-            android:layout_marginTop="8dp"
-            android:fontFamily="sans-serif-light"/>
-    </LinearLayout>
-
-    <!-- Configuración de Anuncios de Voz -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="🔊 Anuncios de Voz"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_marginBottom="12dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Activar anuncios de voz"
-            android:textSize="14sp"
-            android:textColor="#333333"/>
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/googleHomeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-
-
-
-
-
-    <!-- Botón de prueba -->
-    <Button
-        android:id="@+id/testAnnouncementButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="🔊 Probar Anuncio"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#FF9800"
-        android:visibility="gone"/>
-
-    <!-- Botón de permisos -->
-    <Button
-        android:id="@+id/openSettingsButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="⚙️ Configurar Permisos de Notificación"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:backgroundTint="#2196F3"/>
-
-    <!-- Instrucciones -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📋 Instrucciones:\n\n1. Presiona el botón de arriba\n2. Busca 'Notification Capture'\n3. Activa el interruptor\n4. Vuelve a esta app\n5. Ingresa la URL de Google Script\n6. ¡Listo! Las notificaciones se guardarán automáticamente"
-        android:textSize="12sp"
-        android:textColor="#666666"
-        android:layout_marginTop="24dp"
-        android:padding="16dp"
-        android:background="#FFFFFF"/>
+            </LinearLayout>
+       </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
-</ScrollView>

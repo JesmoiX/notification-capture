@@ -17,17 +17,17 @@ import java.util.Map;
  * Registra las notificaciones de pago en Firebase
  */
 public class FirebaseManager {
-    
+
     private static final String TAG = "FirebaseManager";
     private DatabaseReference databaseRef;
     private boolean isEnabled = false;
     private Context context;
-    
+
     public FirebaseManager(Context context) {
         this.context = context;
         try {
             Log.d(TAG, "🔄 Obteniendo instancia de Firebase...");
-            
+
             // Obtener FirebaseApp ya inicializado en MyApplication
             com.google.firebase.FirebaseApp firebaseApp;
             try {
@@ -42,16 +42,15 @@ public class FirebaseManager {
                 }
                 Log.d(TAG, "   FirebaseApp inicializado: " + firebaseApp.getName());
             }
-            
+
             // Obtener instancia de Firebase Database
             FirebaseDatabase database = FirebaseDatabase.getInstance(
-                firebaseApp,
-                "https://notificationcapture-b4935-default-rtdb.firebaseio.com"
-            );
-            
+                    firebaseApp,
+                    "https://notificationcapture-b4935-default-rtdb.firebaseio.com");
+
             databaseRef = database.getReference("payments");
             isEnabled = true;
-            
+
             Log.d(TAG, "✅ FirebaseManager inicializado correctamente");
             Log.d(TAG, "   URL: https://notificationcapture-b4935-default-rtdb.firebaseio.com");
             Log.d(TAG, "   Referencia: payments/");
@@ -62,37 +61,37 @@ public class FirebaseManager {
             isEnabled = false;
         }
     }
-    
+
     /**
      * Registra un pago en Firebase
      * 
-     * @param title Título de la notificación
+     * @param title   Título de la notificación
      * @param content Contenido de la notificación
-     * @param source Fuente (YAPE o Gmail)
+     * @param source  Fuente (YAPE o Gmail)
      */
     public void registerPayment(String title, String content, String source) {
         Log.d(TAG, "📝 registerPayment llamado - Source: " + source);
-        
+
         if (!isEnabled) {
             Log.w(TAG, "⚠️ Firebase no está habilitado, saltando registro");
             return;
         }
-        
+
         try {
             Log.d(TAG, "🔄 Procesando pago para Firebase...");
-            
+
             // Crear timestamp
             long timestamp = System.currentTimeMillis();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             String formattedDate = sdf.format(new Date(timestamp));
-            
+
             // Extraer información del pago
             PaymentInfo info = extractPaymentInfo(content);
-            
+
             // Obtener código de dispositivo
             DeviceCodeManager deviceCodeManager = new DeviceCodeManager(context);
             String deviceCode = deviceCodeManager.getDeviceCode();
-            
+
             // Crear objeto de pago
             Map<String, Object> payment = new HashMap<>();
             payment.put("deviceCode", deviceCode);
@@ -104,55 +103,57 @@ public class FirebaseManager {
             payment.put("sender", info.sender);
             payment.put("amount", info.amount);
             payment.put("currency", "PEN"); // Soles peruanos
-            
+
             // Generar ID único basado en timestamp
             String paymentId = "payment_" + timestamp;
-            
+
             Log.d(TAG, "💾 Guardando en Firebase con ID: " + paymentId);
             Log.d(TAG, "   Datos: " + payment.toString());
-            
+
             // Guardar en Firebase
             databaseRef.child(paymentId).setValue(payment)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "✅ Pago registrado en Firebase: " + paymentId);
-                    Log.d(TAG, "   Remitente: " + info.sender + ", Monto: " + info.amount);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "❌ Error al registrar en Firebase: " + e.getMessage());
-                    Log.e(TAG, "   Detalles: ", e);
-                });
-                
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "✅ Pago registrado en Firebase: " + paymentId);
+                        Log.d(TAG, "   Remitente: " + info.sender + ", Monto: " + info.amount);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "❌ Error al registrar en Firebase: " + e.getMessage());
+                        Log.e(TAG, "   Detalles: ", e);
+                    });
+
         } catch (Exception e) {
             Log.e(TAG, "❌ Error al procesar pago para Firebase: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Extrae información del pago del contenido
      */
     private PaymentInfo extractPaymentInfo(String content) {
         PaymentInfo info = new PaymentInfo();
-        
+
         try {
             // Extraer nombre (entre "Yape!" o "!" y "te envió")
+            // Extraer nombre (entre "Yape!" o inicio y "te envió")
             if (content.contains("te envió")) {
                 String[] parts = content.split("te envió");
                 if (parts.length > 0) {
                     String senderPart = parts[0];
+                    // Clean up common prefixes but KEEP special chars like *
                     senderPart = senderPart.replace("Yape!", "").replace("!", "").trim();
                     if (!senderPart.isEmpty()) {
                         info.sender = senderPart;
                     }
                 }
             }
-            
+
             // Extraer monto (después de "S/")
             if (content.contains("S/")) {
                 String[] parts = content.split("S/");
                 if (parts.length > 1) {
                     String amountPart = parts[1].trim();
-                    
+
                     // Extraer solo números y punto decimal
                     StringBuilder amountBuilder = new StringBuilder();
                     for (char c : amountPart.toCharArray()) {
@@ -162,20 +163,20 @@ public class FirebaseManager {
                             break;
                         }
                     }
-                    
+
                     if (amountBuilder.length() > 0) {
                         info.amount = amountBuilder.toString();
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             Log.e(TAG, "Error al extraer información: " + e.getMessage());
         }
-        
+
         return info;
     }
-    
+
     /**
      * Clase interna para almacenar información del pago
      */
@@ -183,14 +184,14 @@ public class FirebaseManager {
         String sender = "Desconocido";
         String amount = "0.00";
     }
-    
+
     /**
      * Verifica si Firebase está habilitado
      */
     public boolean isEnabled() {
         return isEnabled;
     }
-    
+
     /**
      * Obtiene una referencia a un nodo específico
      */

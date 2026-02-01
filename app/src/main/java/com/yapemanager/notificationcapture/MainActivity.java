@@ -205,6 +205,28 @@ public class MainActivity extends AppCompatActivity {
             announcer.announceYapePayment("Prueba", "Este es un mensaje de prueba");
             Toast.makeText(this, "🔊 Anuncio de prueba enviado", Toast.LENGTH_SHORT).show();
         });
+
+        // ═══════════════════════════════════════════════════════════
+        // UI NAVIGATION LOGIC (New Design)
+        // ═══════════════════════════════════════════════════════════
+        View dashboardScreen = findViewById(R.id.dashboard_screen);
+        View settingsScreen = findViewById(R.id.settings_screen);
+        View toSettingsBtn = findViewById(R.id.toSettingsBtn);
+        View backToDashboardBtn = findViewById(R.id.backToDashboardBtn);
+
+        if (toSettingsBtn != null && settingsScreen != null) {
+            toSettingsBtn.setOnClickListener(v -> {
+                dashboardScreen.setVisibility(View.GONE);
+                settingsScreen.setVisibility(View.VISIBLE);
+            });
+        }
+
+        if (backToDashboardBtn != null && dashboardScreen != null) {
+            backToDashboardBtn.setOnClickListener(v -> {
+                settingsScreen.setVisibility(View.GONE);
+                dashboardScreen.setVisibility(View.VISIBLE);
+            });
+        }
     }
 
     @Override
